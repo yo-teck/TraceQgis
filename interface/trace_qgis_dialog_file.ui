@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>TraceQgiDialog</class>
+  <widget class="QDialog" name="TraceQgiDialog">
+    <property name="windowTitle">
+      <string>TraceQgis</string>
+    </property>
+    <property name="minimumSize">
+    <size>
+      <width>500</width>
+      <height>400</height>
+    </size>
+  </property>
+    <!-- Layout principal sur le QDialog -->
+    <layout class="QVBoxLayout" name="verticalLayout">
+      <!-- Conteneur FormLayout pour les champs -->
+      <item>
+        <layout class="QFormLayout" name="formLayout">
+          <!-- Ligne 0 : Domain PDDL -->
+          <item row="0" column="0">
+            <widget class="QLabel" name="domain_label">
+              <property name="text">
+                <string>Fichier domain .pddl</string>
+              </property>
+              <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+            </widget>
+          </item>
+          <item row="0" column="1">
+            <widget class="QgsFileWidget" name="domain_filepath"/>
+          </item>
+
+          <!-- Ligne 1 : Problem PDDL -->
+          <item row="1" column="0">
+            <widget class="QLabel" name="problem_label">
+              <property name="text">
+                <string>Fichier problem .pddl</string>
+              </property>
+            </widget>
+          </item>
+          <item row="1" column="1">
+            <widget class="QgsFileWidget" name="problem_filepath"/>
+          </item>
+
+          <!-- Ligne 2 : Dossier de template -->
+          <item row="2" column="0">
+            <widget class="QLabel" name="dir_template_label">
+              <property name="text">
+                <string>Dossier dans lequel sauvegarder le template</string>
+              </property>
+            </widget>
+          </item>
+          <item row="2" column="1">
+            <widget class="QgsFileWidget" name="dir_template_path">
+              <!-- 1 = GetDirectory dans QgsFileWidget::StorageMode -->
+              <property name="storageMode">
+                <number>1</number>
+              </property>
+              <!-- Afficher seulement les répertoires -->
+              <property name="options">
+                <set>QFileDialog::ShowDirsOnly</set>
+              </property>
+            </widget>
+          </item>
+
+          <!-- Ligne 3 : Bouton “Télécharge le schema YAML” s'étend sur deux colonnes -->
+          <item row="3" column="0" colspan="2">
+            <widget class="QPushButton" name="pushButton">
+              <property name="text">
+                <string>Télécharge le schema YAML</string>
+              </property>
+            </widget>
+          </item>
+
+          <!-- Ligne 4 : Fichier configuration Yaml -->
+          <item row="4" column="0">
+            <widget class="QLabel" name="label_3">
+              <property name="text">
+                <string>Fichier configuration (Yaml)</string>
+              </property>
+            </widget>
+          </item>
+          <item row="4" column="1">
+            <widget class="QgsFileWidget" name="configuration_filepath"/>
+          </item>
+          <!-- Ligne 5 : Output chemin domain/problem -->
+          <item row="5" column="0">
+            <widget class="QLabel" name="domain_problem_output_label">
+              <property name="text">
+                <string>Chemin de sortie Domain/Problem</string>
+              </property>
+            </widget>
+          </item>
+          <item row="5" column="1">
+            <widget class="QPlainTextEdit" name="domain_problem_output">
+              <property name="minimumSize">
+                <size>
+                  <width>400</width>
+                  <height>300</height>
+                </size>
+              </property>
+            </widget>
+          </item>
+          <item row="6" column="0" colspan="2">
+            <widget class="QPushButton" name="demo_button">
+              <property name="text">
+                <string>Demo</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+
+      <!-- Bouton OK / Cancel en bas -->
+      <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="standardButtons">
+            <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          </property>
+          <property name="centerButtons">
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+
+  <customwidgets>
+    <customwidget>
+      <class>QgsFileWidget</class>
+      <extends>QWidget</extends>
+      <header>qgsfilewidget.h</header>
+    </customwidget>
+  </customwidgets>
+
+  <resources/>
+  <connections>
+    <connection>
+      <sender>buttonBox</sender>
+      <signal>accepted()</signal>
+      <receiver>TraceQgiDialog</receiver>
+      <slot>accept()</slot>
+    </connection>
+    <connection>
+      <sender>buttonBox</sender>
+      <signal>rejected()</signal>
+      <receiver>TraceQgiDialog</receiver>
+      <slot>reject()</slot>
+    </connection>
+  </connections>
+</ui>

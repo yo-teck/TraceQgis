@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockWidget</class>
+ <widget class="QDockWidget" name="DockWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>336</width>
+    <height>587</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TraceQGIS - Paramétrage</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>150</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Information</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_info">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Tick courant:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLCDNumber" name="tickCourant"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Equivalent:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="tickEquivalentLabel">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Afficher:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="checkbox_show_name">
+         <property name="text">
+          <string>Nom</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QCheckBox" name="checkbox_show_position">
+         <property name="text">
+          <string>Position</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>128</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Temporalité</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_temp">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Tick</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QRadioButton" name="radioButton_vitesse2">
+         <property name="text">
+          <string>x2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QRadioButton" name="radioButton_vitesse1">
+         <property name="text">
+          <string>x1</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Vitesse</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QRadioButton" name="radioButton_vitesse4">
+         <property name="text">
+          <string>x10</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="4">
+        <widget class="QSlider" name="tickSlider">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QRadioButton" name="radioButton_vitesse3">
+         <property name="text">
+          <string>x5</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Pause</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" colspan="4">
+        <widget class="QPushButton" name="pauseButton">
+         <property name="text">
+          <string>Pause</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Option</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_option">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Focus</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="focusRadioContainer" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,1 @@
+DEFAULT_ANIMATION_DURATION = 10 #En secondes

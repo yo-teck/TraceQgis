@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/plugins/trace_qgis" >
+        <file>assets/icon.png</file>
+        <file>assets/icon_param.png</file>
+    </qresource>
+</RCC>

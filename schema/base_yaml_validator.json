@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "object_types": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/objectType" },
+      "minProperties": 1
+    },
+    "init_predicats": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/predicate" },
+      "minProperties": 1
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/action" },
+      "minProperties": 1
+    },
+    "fixed_position": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "properties": {
+              "var": { "type": "string" },
+              "x": { "type": "number" },
+              "y": { "type": "number" }
+            },
+            "required": ["var", "x", "y"],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": ["object_types", "init_predicats", "actions", "fixed_position"],
+  "additionalProperties": false,
+  "definitions": {
+    "objectType": {
+      "type": "object",
+      "properties": {
+        "sprite": { "type": "string" }
+      },
+      "required": ["sprite"],
+      "additionalProperties": false
+    },
+    "predicate": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["position", "storage"]
+        },
+        "mobile_var": { "type": "string" },
+        "fixed_var": { "type": "string" }
+      },
+      "required": ["type", "mobile_var", "fixed_var"],
+      "additionalProperties": false
+    },
+    "animation": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "start_at": { "type": "integer" },
+        "end_at": { "type": "integer" },
+        "entity_vars": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      },
+      "required": ["name", "start_at", "end_at", "entity_vars"],
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "properties": {
+        "duration": { "type": "integer" },
+        "animations": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/animation" },
+          "minItems": 1
+        }
+      },
+      "required": ["duration", "animations"],
+      "additionalProperties": false
+    }
+  }
+}
