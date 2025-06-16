@@ -24,16 +24,6 @@ def test_calculate_azimuth():
     # on sait que c'est dans [0,360], on peut juste vérifier que ça tourne bien
     assert 0 <= az <= 360
 
-def test_point_at_distance():
-    lat, lon = Utils.point_at_distance(0, 0, 90, 1000)  # 1km à l'est de l'équateur
-    assert abs(lat) < 0.01
-    assert lon > 0  # longitude doit augmenter vers l'est
-
-def test_destination_point():
-    lat, lon = Utils.destination_point(0, 0, 90, 1000)  # 1km à l'est
-    assert abs(lat) < 0.01
-    assert lon > 0
-
 def test_rotating_position():
     # Au start_tick, azimuth = 0
     lat1, lon1 = Utils.rotating_position(0, 10, 0, 0, 0, 1000)

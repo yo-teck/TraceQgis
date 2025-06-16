@@ -7,7 +7,19 @@ class Utils:
 
     @staticmethod
     def get_intermediare_value(tick_start: int, tick_end: int, current_tick: int, start_value: float, end_value: float) -> float:
+        """
+        Renvoie une valeur interpolée entre start_value et end_value en fonction de la progression actuelle (current_tick) basée sur tick_start et tick_end.
 
+        Paramètres:
+        tick_start (int): Le tick initial représentant le début de l'intervalle.
+        tick_end (int): Le tick final représentant la fin de l'intervalle.
+        current_tick (int): Le tick actuel pour lequel la valeur doit être calculée.
+        start_value (float): La valeur de départ correspondant à tick_start.
+        end_value (float): La valeur finale correspondant à tick_end.
+
+        Retourne:
+        float: La valeur interpolée correspondant au current_tick.
+        """
         if current_tick >= tick_end:
             return end_value
         elif current_tick == tick_start:
@@ -37,25 +49,6 @@ class Utils:
 
         azimuth = math.degrees(math.atan2(x, y))
         return (azimuth + 360) % 360
-
-    @staticmethod
-    def point_at_distance(lat: float, lon: float, azimuth_deg: float, distance_m: float):
-        """
-        Calcule un point GPS à une certaine distance (en mètres)
-        et azimut (en degrés) à partir d'un point origine.
-        """
-        R = 6371000  # Rayon de la Terre en mètres
-
-        phi1 = math.radians(lat)
-        lambda1 = math.radians(lon)
-        theta = math.radians(azimuth_deg)
-
-        phi2 = math.asin(math.sin(phi1) * math.cos(distance_m / R) +
-                         math.cos(phi1) * math.sin(distance_m / R) * math.cos(theta))
-        lambda2 = lambda1 + math.atan2(math.sin(theta) * math.sin(distance_m / R) * math.cos(phi1),
-                                       math.cos(distance_m / R) - math.sin(phi1) * math.sin(phi2))
-
-        return math.degrees(phi2), math.degrees(lambda2)
 
     @staticmethod
     def destination_point(lat_deg: float, lon_deg: float, azimuth_deg: float, distance_m: float) -> tuple[float, float]:
@@ -113,6 +106,20 @@ class Utils:
 
     @staticmethod
     def sort_action_func(action):
+        """
+        Méthode statique qui trie une action en fonction de son type.
+        Attribue un ordre basé sur le type de l'action pour une utilisation dans des processus de hiérarchisation
+        ou de tri.
+
+        Paramètres:
+        action : L'objet représentant l'action à trier.
+
+        Retourne:
+        Un entier représentant la position prédéfinie dans l'ordre de tri:
+        0 pour les objets de type ActionLoad,
+        6 pour les objets de type ActionUnload,
+        3 pour tous les autres types d'action.
+        """
         from ..actions.action_load import ActionLoad
         from ..actions.action_unload import ActionUnload
 
@@ -125,10 +132,28 @@ class Utils:
 
     @staticmethod
     def sort_actions(actions):
+        """
+            Méthode statique qui trie une liste d'actions en utilisant une fonction de tri spécifique.
+
+            Paramètres:
+            actions: Liste d'actions à trier.
+
+            Retourne:
+            Une nouvelle liste contenant les actions triées selon le critère défini par la fonction sort_action_func.
+        """
         return sorted(actions, key=Utils.sort_action_func)
 
     @staticmethod
     def generate_random_color(entity_id: str):
+        """
+        Méthode statique pour générer une couleur aléatoire basée sur un identifiant d'entité donné. L'identifiant est utilisé comme graine pour garantir que les couleurs générées pour le même identifiant restent cohérentes.
+
+        Paramètres:
+        entity_id (str): Identifiant de l'entité utilisé pour initialiser la graine aléatoire.
+
+        Renvoie:
+        QColor: Couleur générée aléatoirement avec des composantes rouge, vert et bleu comprises entre 50 et 255.
+        """
         random.seed(entity_id)  # str accepté
         r = random.randint(50, 255)
         g = random.randint(50, 255)

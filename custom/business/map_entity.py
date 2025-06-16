@@ -21,47 +21,48 @@ if TYPE_CHECKING:
 from .layer_trace_qgis import LayerTraceQGIS
 
 class MapEntity:
-    """
-        Classe MapEntity:
-        Classe représentant une entité dans une carte géographique avec des attributs spécifiques, tels que son emplacement, son icône, sa taille, et d'autres propriétés. La classe fournit des fonctionnalités permettant d'interagir avec l'entité, comme la modification de sa position, la réinitialisation de ses attributs, ou l'ajout de texte associé.
-    """
 
     def __init__(self, id: str, name: str, url_icon: str, latitude: float, longitude: float, altitude: float = 0, size: float = 5):
         """
-        Initialise une instance de la classe.
+        Initialise une instance avec ses propriétés spécifiques.
 
         Paramètres:
-        id (str): Identifiant unique de l'objet.
-        name (str): Nom de l'objet.
-        url_icon (str): Chemin vers l'icône de l'objet.
-        latitude (float): Latitude géographique de l'objet.
-        longitude (float): Longitude géographique de l'objet.
-        altitude (float, optionnel): Altitude géographique de l'objet. Par défaut, 0.
-        size (float, optionnel): Taille de l'objet. Par défaut, 5.
+        id (str): Identifiant unique de l'instance.
+        name (str): Nom de l'instance.
+        url_icon (str): URL de l'icône associée.
+        latitude (float): Latitude pour l'instance.
+        longitude (float): Longitude pour l'instance.
+        altitude (float, optionnel): Altitude pour l'instance, par défaut à 0.
+        size (float, optionnel): Taille de l'objet, par défaut à 5.
 
         Attributs:
-        id (str): Identifiant unique de l'objet.
-        name (str): Nom de l'objet.
-        url_icon (str): Chemin de l'icône actuelle de l'objet.
-        url_icon_default (str): Chemin de l'icône par défaut de l'objet.
-        size (float): Taille actuelle de l'objet.
-        size_default (float): Taille par défaut de l'objet.
-        angle (float): Angle de l'objet. Par défaut, 0.
-        opacity (float): Opacité de l'objet. Par défaut, 1.
-        highlight: Contenu non défini pour la surbrillance.
-        latitude_default (float): Latitude par défaut de l'objet.
-        longitude_default (float): Longitude par défaut de l'objet.
-        altitude (float): Altitude actuelle de l'objet.
-        altitude_default (float): Altitude par défaut de l'objet.
-        texts (list): Liste des textes associés à l'objet.
-        feature (QgsFeature): Objet géospatial QGIS.
-        label (QLabel): Widget d'étiquette affichant des informations sur l'objet.
+        id: Stocke l'identifiant de l'instance.
+        name: Stocke le nom de l'instance.
+        url_icon: Stocke l'URL de l'icône.
+        url_icon_default: Valeur par défaut pour l'URL de l'icône.
+        size: Taille de l'instance en tant que nombre décimal.
+        size_default: Taille par défaut de l'instance.
+        angle: Angle de rotation de l'instance, initialisé à 0.
+        opacity: Niveau d'opacité de l'instance, initialisé à 1.
+        highlight: Met en évidence une sélection, initialisé à None.
+        background_image: Image d'arrière-plan, initialisé à None.
+        latitude_default: Latitude initiale par défaut.
+        longitude_default: Longitude initiale par défaut.
+        altitude: Altitude actuelle de l'instance.
+        altitude_default: Altitude par défaut de l'instance.
+        texts: Liste des textes associés à l'instance.
 
-        Actions effectuées:
-        - Initialise les valeurs des attributs basées sur les paramètres.
-        - Initialise la géométrie spatiale et les attributs de l'objet QgsFeature.
-        - Configure et crée un QLabel pour afficher des informations spécifiques sur l'objet.
-        - Met à jour la position de l'étiquette à sa position initiale.
+        need_refresh_category: Détermine si une catégorie nécessite une mise à jour, initialisé à False.
+        need_update_label: Indique si une étiquette doit être mise à jour, initialisé à False.
+
+        feature: Contient un objet QgsFeature avec un identifiant et un nom comme attributs, et une géométrie représentant le point XY.
+        label: Étiquette configurée pour le point.
+        category: Catégorie calculée automatiquement pour organiser cette instance.
+
+        Méthodes:
+        create_label(): Crée une étiquette liée à cet objet.
+        update_label_position(refresh_category, refresh_feature): Met à jour la position de l'étiquette selon les paramètres fournis.
+        generate_category(): Génère une catégorie spécifique associée à cet objet.
         """
         self.id = id
         self.name = name
@@ -93,171 +94,346 @@ class MapEntity:
 
     def get_latitude(self) -> float:
         """
-        Retourne la latitude actuelle de l'entité,
-        extraite de la géométrie QgsFeature.
+        Renvoie la latitude du point géométrique.
+
+        Retourne:
+            float: La latitude du point.
         """
         point = self.feature.geometry().asPoint()
         return point.y()  # y correspond à la latitude
 
     def get_longitude(self) -> float:
         """
-        Retourne la longitude actuelle de l'entité,
-        extraite de la géométrie QgsFeature.
+        Récupère la longitude d'une entité géographique.
+
+        Retourne:
+            float: La coordonnée x (longitude) du point géométrique associé à l'entité.
         """
         point = self.feature.geometry().asPoint()
         return point.x()
 
-    # Getter et Setter pour altitude
     def get_altitude(self) -> float:
+        """
+        Renvoie l'altitude actuelle.
+
+        Retourne:
+            float: La valeur de l'altitude.
+        """
         return self.altitude
 
     def set_altitude(self, value: float):
+        """
+        Définit l'altitude à la valeur spécifiée.
+
+        Paramètres:
+        value (float): La nouvelle valeur de l'altitude.
+        """
         self.altitude = value
 
-    # Getter et Setter pour url_icon
     def get_url_icon(self) -> str:
+        """
+        Retourne l'icône d'URL.
+
+        Renvoie:
+        Une chaîne de caractères représentant l'icône d'URL.
+        """
         return self.url_icon
 
     def set_url_icon(self, value: str, need_refresh_category: bool = True):
+        """
+        Définit l'icône d'URL et met à jour l'état de rafraîchissement de la catégorie si nécessaire.
+
+        Paramètres:
+        value (str): L'URL de l'icône à affecter.
+        need_refresh_category (bool): Indique s'il est nécessaire de marquer la catégorie pour un rafraîchissement. Par défaut à True.
+        """
         self.url_icon = value
         self.set_need_refresh_category(need_refresh_category)
 
     def reset_url_icon(self):
         """
-        Réinitialise l'icône à sa valeur par défaut.
+        Réinitialise l'icône de l'URL à sa valeur par défaut.
+
+        Cette méthode remplace l'icône actuelle de l'URL par l'icône par défaut spécifiée dans l'attribut url_icon_default.
         """
         self.set_url_icon(self.url_icon_default)
 
-    # Getter et Setter pour background_image
     def get_background_image(self) -> str:
+        """
+        Renvoie l'image d'arrière-plan actuelle.
+
+        Cette méthode retourne le chemin ou l'identifiant de l'image d'arrière-plan actuellement définie.
+
+        Retourne:
+            str: L'image d'arrière-plan.
+        """
         return self.background_image
 
     def set_background_image(self, value: str|None, need_refresh_category: bool = True):
+        """
+        Définit l'image d'arrière-plan de l'objet.
+
+        Parameters:
+         value (str | None): Chemin ou identifiant de l'image à définir comme arrière-plan, ou None pour supprimer l'image existante.
+         need_refresh_category (bool): Indique si une actualisation de la catégorie est nécessaire après la modification de l'image d'arrière-plan. La valeur par défaut est True.
+        """
         self.background_image = value
         self.set_need_refresh_category(need_refresh_category)
 
     def reset_background_image(self):
         """
-        Réinitialise l'opacité de l'objet à sa valeur par défaut, qui est 1.
-        Cela garantit que l'objet est complètement opaque après l'appel de cette méthode.
+        Réinitialise l'image d'arrière-plan à sa valeur par défaut.
+
+        Cette méthode supprime l'image d'arrière-plan actuellement définie
+        en assignant une valeur nulle, indiquant qu'aucune image n'est utilisée.
         """
         self.set_background_image(None)
 
-    # Getter et Setter pour highlight
     def get_highlight(self) -> bool:
+        """
+        Renvoie l'état de mise en évidence.
+
+        Retourne:
+        bool: La valeur de l'attribut highlight indiquant si un élément est mis en évidence.
+        """
         return self.highlight
 
     def set_highlight(self, value: str|None, need_refresh_category: bool = True):
+        """
+        Définit la valeur de mise en surbrillance et met à jour l'état de rafraîchissement de la catégorie si nécessaire.
+
+        Arguments:
+        value: Une chaîne ou None représentant la valeur de mise en surbrillance à définir.
+        need_refresh_category: Un booléen indiquant si la catégorie doit être rafraîchie. Par défaut, True.
+        """
         self.highlight = value
         self.set_need_refresh_category(need_refresh_category)
 
     def reset_highlight(self):
         """
-        Réinitialise la mise en surbrillance.
+        Réinitialise la mise en surbrillance de l'objet.
+
+        Définit la mise en surbrillance sur "None" pour indiquer qu'aucune
+        mise en surbrillance n'est actuellement active.
         """
         self.set_highlight(None)
 
-    # Getter et Setter pour size
     def get_size(self) -> float:
+        """
+        Retourne la taille de l'objet.
+
+        Retour :
+            float : La taille de l'objet.
+        """
         return self.size
 
     def set_size(self, value: float, need_refresh_category: bool = True):
+        """
+        Définit la taille et met à jour l'état pour indiquer si une actualisation de catégorie est nécessaire.
+
+        Paramètres:
+        value (float): La nouvelle taille à définir.
+        need_refresh_category (bool): Indique si une actualisation de catégorie est nécessaire. Par défaut, True.
+        """
         self.size = value
         self.set_need_refresh_category(need_refresh_category)
 
     def reset_size(self):
         """
-        Réinitialise la taille de l'objet à sa valeur par défaut.
+        Réinitialise la taille d'un objet à la valeur par défaut.
+
+        Cette méthode met à jour la taille actuelle de l'objet en utilisant
+        la valeur par défaut définie dans l'attribut `size_default`.
         """
         self.set_size(self.size_default)
 
-    # Getter et Setter pour texts
     def get_texts(self) -> list[str]:
+        """
+        Récupère une liste de textes.
+
+        Renvoie :
+            list[str] : Une liste de chaînes de caractères.
+        """
         return self.texts
 
     def set_texts(self, value: list[str]):
+        """
+        Définit les textes avec une liste de chaînes spécifiées.
+
+        Paramètres :
+        value (list[str]) : Liste de chaînes à assigner à l'attribut texts.
+
+        Comportement :
+        - Met à jour l'attribut texts avec la liste fournie.
+        - Indique que l'étiquette nécessite une mise à jour en définissant l'indicateur approprié à True.
+        """
         self.texts = value
         self.set_need_update_label(True)
 
     def append_text(self, text: str):
         """
-        Ajoute une chaîne de texte à la liste existante.
+        Ajoute un texte à la liste des textes et met à jour l'état de l'étiquette.
 
         Paramètres:
-        text (str): La chaîne de texte à ajouter.
+        text (str): Le texte à ajouter.
         """
         self.texts.append(text)
         self.set_need_update_label(True)
 
     def reset_text(self):
         """
-        Réinitialise le texte stocké dans l'objet.
+        Réinitialise les textes de l'objet.
+
+        Vérifie si des textes existent. Si c'est le cas, remplace les textes existants
+        par une liste vide.
         """
         if self.texts:
             self.set_texts([])
 
-    # Getter
     def get_feature(self) -> str:
+        """
+        Renvoie la valeur de l'attribut 'feature'.
+
+        Retour:
+            str: La valeur de 'feature'.
+        """
         return self.feature
 
-    # Getter et Setter pour need_refresh_category
     def get_need_refresh_category(self) -> bool:
+        """
+        Retourne la valeur de l'attribut need_refresh_category.
+
+        Renvoie:
+         bool: La valeur de l'attribut need_refresh_category.
+        """
         return self.need_refresh_category
 
     def set_need_refresh_category(self, value: bool):
+        """
+        Définit la nécessité de rafraîchir la catégorie.
+
+        Paramètres:
+        value (bool): Indique si la catégorie doit être marquée comme nécessitant un rafraîchissement.
+
+        Comportement:
+        Si l'attribut 'need_refresh_category' est actuellement défini sur False, il sera mis à jour avec la valeur spécifiée.
+        """
         if self.need_refresh_category is False:
             self.need_refresh_category = value
 
-    # Getter et Setter pour need_refresh_category
     def get_need_update_label(self) -> bool:
+        """
+        Renvoie l'état actuel de l'attribut need_update_label.
+
+        Retourne:
+            bool : La valeur de l'attribut need_update_label indiquant si une mise à jour de l'étiquette est nécessaire.
+        """
         return self.need_update_label
 
     def set_need_update_label(self, value: bool):
+        """
+        Définit si l'attribut need_update_label doit être mis à jour.
+
+        Paramètres:
+        value (bool): Valeur indiquant si l'attribut need_update_label doit être mis à jour.
+        """
         if self.need_update_label is False:
             self.need_update_label = value
 
-    # Getter et Setter pour name
     def get_name(self) -> str:
+        """
+        Renvoie le nom.
+
+        Retour:
+            str: Le nom.
+        """
         return self.name
 
     def set_name(self, value: str):
+        """
+        Définit le nom de l'objet.
+
+        Paramètres:
+        value (str): Le nom à attribuer à l'objet.
+        """
         self.name = value
 
-    # Getter et Setter pour angle
     def get_angle(self) -> float:
+        """
+        Renvoie l'angle actuel.
+
+        Retour:
+        float : La valeur de l'angle.
+        """
         return self.angle
 
     def set_angle(self, value: float, need_refresh_category: bool = True):
+        """
+        Définit l'angle à une valeur spécifiée et, si nécessaire, met à jour l'état de rafraîchissement de la catégorie.
+
+        Paramètres:
+        value (float): La valeur de l'angle à définir.
+        need_refresh_category (bool): Indique si la catégorie doit être marquée pour un rafraîchissement. La valeur par défaut est True.
+        """
         self.angle = value
         self.set_need_refresh_category(need_refresh_category)
 
     def reset_angle(self):
         """
         Réinitialise l'angle de l'objet à zéro.
+
+        Cette méthode modifie l'angle actuel de l'objet en le fixant à 0.
+        Elle utilise la méthode interne set_angle pour effectuer cette opération.
         """
         self.set_angle(0)
 
-    # Getter et Setter pour id
     def get_id(self) -> str:
+        """
+        Cette méthode retourne l'identifiant unique associé à l'objet.
+
+        Retour:
+            str: L'identifiant unique de l'objet.
+        """
         return self.id
 
-    # Getter et Setter pour opacity
     def get_opacity(self) -> float:
+        """
+        Renvoie l'opacité actuelle.
+
+        Retourne:
+            float: La valeur de l'opacité.
+        """
         return self.opacity
 
     def set_opacity(self, value: float, need_refresh_category: bool = True):
+        """
+        Définit l'opacité de l'objet.
+
+        Paramètres:
+        value (float): La nouvelle valeur d'opacité.
+        need_refresh_category (bool, optionnel): Indique si une actualisation de la catégorie est nécessaire. Valeur par défaut à True.
+        """
         self.opacity = value
         self.set_need_refresh_category(need_refresh_category)
 
     def reset_opacity(self):
         """
-        Réinitialise l'opacité de l'objet à sa valeur par défaut, qui est 1.
-        Cela garantit que l'objet est complètement opaque après l'appel de cette méthode.
+        Réinitialise l'opacité de l'objet.
+        Fixe l'opacité à la valeur maximale (1).
         """
         self.set_opacity(1)
 
-    # Getter
     def get_category(self):
+        """
+        Renvoie la catégorie après avoir vérifié si une mise à jour est nécessaire.
+
+        Si la catégorie nécessite une mise à jour (indiquée par l'attribut need_refresh_category),
+        elle est régénérée en appelant la méthode generate_category. Une fois mise à jour,
+        la propriété need_refresh_category est définie sur False pour indiquer que la catégorie est actuelle.
+
+        Retourne:
+        La catégorie actualisée ou non actualisée selon l'état de need_refresh_category.
+        """
         if self.need_refresh_category:
             self.category = self.generate_category()
             self.need_refresh_category = False
@@ -266,6 +442,18 @@ class MapEntity:
 
 
     def generate_category(self) -> QgsRendererCategory:
+        """
+        Génère une catégorie de rendu basée sur les propriétés de l'objet.
+
+        Cette méthode crée un objet QgsRendererCategory utilisant un symbole configuré avec plusieurs couches symboliques en fonction des propriétés définies :
+        - Une taille et une opacité générales pour le symbole.
+        - Ajout d'une couche de surbrillance avec un effet Glow si la propriété `highlight` est définie.
+        - Ajout d'une couche d'arrière-plan avec une image raster si `background_image` est spécifié.
+        - Ajout de la couche principale du symbole basée sur l'image spécifique définie dans `url_icon`.
+
+        Retourne:
+        Un objet QgsRendererCategory contenant le symbole configuré et les propriétés associées.
+        """
         symbol = QgsMarkerSymbol()
         symbol.deleteSymbolLayer(0)
         symbol.setSize(self.size)
@@ -299,12 +487,18 @@ class MapEntity:
 
     def move_to(self, lat: float, lon: float, alti: float):
         """
-        Déplace l'objet vers les coordonnées spécifiées et met à jour son altitude.
+        Déplace l'entité vers nouvelles coordonnées géographiques et met à jour l'altitude.
 
         Paramètres:
-        lat (float): Latitude de la nouvelle position.
-        lon (float): Longitude de la nouvelle position.
-        alti (float): Altitude de la nouvelle position.
+        lat (float): La latitude de la nouvelle position.
+        lon (float): La longitude de la nouvelle position.
+        alti (float): La nouvelle altitude.
+
+        Actions:
+        - Définit la nouvelle géométrie de l'entité avec les coordonnées données.
+        - Met à jour les données de la couche pour refléter la nouvelle position.
+        - Met à jour la propriété `altitude` de l'entité.
+        - Indique qu'une mise à jour de l'étiquette est nécessaire.
         """
         self.feature.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(lon, lat)))
         LayerTraceQGIS.get_instance().layer.dataProvider().changeGeometryValues({self.feature.id(): self.feature.geometry()})
@@ -312,21 +506,28 @@ class MapEntity:
         self.set_need_update_label(True)
 
     def move_to_entity(self, map_entity):
+        """
+        Déplace l'objet actuel vers l'entité spécifiée en utilisant ses coordonnées.
+
+        Paramètres:
+        map_entity : Une entité vers laquelle bougée
+        """
         self.move_to(map_entity.get_latitude(), map_entity.get_longitude(), map_entity.altitude)
 
     def reset(self):
         """
-        Réinitialise les paramètres d'un objet à leurs valeurs par défaut.
+        Réinitialise les attributs de l'objet à leurs valeurs par défaut.
 
-        Les actions effectuées par cette méthode comprennent :
-        - Réinitialisation de l'icône associée
-        - Réinitialisation de la position
-        - Réinitialisation de la taille
-        - Réinitialisation du texte
-        - Réinitialisation de l'angle
-        - Réinitialisation de l'opacité
-        - Réinitialisation de la mise en surbrillance
-        - Mise à jour de la position de l'étiquette
+        Les méthodes appelées effectuent les actions suivantes :
+        - Réinitialise l'icône URL.
+        - Réinitialise la position de l'objet.
+        - Réinitialise la taille de l'objet.
+        - Réinitialise le texte de l'objet.
+        - Réinitialise l'angle de rotation de l'objet.
+        - Réinitialise l'opacité de l'objet.
+        - Réinitialise la mise en surbrillance de l'objet.
+        - Réinitialise l'image d'arrière-plan de l'objet.
+        - Réinitialise l'étiquette associée à l'objet.
         """
         self.reset_url_icon()
         self.reset_position()
@@ -340,11 +541,17 @@ class MapEntity:
 
     def reset_position(self):
         """
-        Réinitialise la position de l'objet à ses coordonnées par défaut.
+        Réinitialise la position de l'objet aux valeurs par défaut.
         """
         self.move_to(self.latitude_default, self.longitude_default, self.altitude_default)
 
     def create_label(self) -> QLabel:
+        """
+        Créer une étiquette QLabel avec des propriétés spécifiques, telles que la police, le style de bordure, la transparence du fond et des événements de souris. Cette méthode retourne l'objet QLabel configuré.
+
+        Retourne:
+            QLabel: L'instance QLabel configurée.
+        """
         label = QLabel(iface.mainWindow())
         label.setFont(QFont("Arial", 10))
         label.setStyleSheet("background-color: rgba(255, 255, 255, 200); border: 1px solid black;")
@@ -353,6 +560,12 @@ class MapEntity:
         return label
 
     def reset_label(self):
+        """
+        Réinitialise l'étiquette en cours en la supprimant et en en créant une nouvelle.
+
+        Cette méthode cache d'abord l'étiquette existante, détache son parent et supprime l'étiquette de la mémoire.
+        Une nouvelle étiquette est ensuite recréée et marquée comme nécessitant une mise à jour.
+        """
         self.hide_label()
         self.label.setParent(None)
         self.label.deleteLater()
@@ -361,14 +574,21 @@ class MapEntity:
 
     def update_label_position(self, show_name: bool, show_position: bool):
         """
-        Met à jour la position d'un label sur le canvas en fonction de la position d'une entité géographique.
+        Met à jour la position et la visibilité du label associé à une fonctionnalité sur un canevas, en fonction des paramètres d'affichage donnés.
 
-        Cette méthode calcule la position écran d'une entité géographique à partir de sa géométrie et applique un décalage
-        pour positionner un label de manière à ce qu'il n'obstrue pas l'entité. Elle vérifie également si le label se trouve
-        dans les limites visibles du canvas et ajuste sa visibilité en conséquence.
+        Paramètres:
+        show_name (bool): Indique si le nom de l'entité doit être affiché.
+        show_position (bool): Indique si la position de l'entité doit être affichée.
 
-        Pour le contenu du label, elle intègre l'ID de l'entité, ses coordonnées (X, Y et Z) avec une précision à quatre chiffres
-        après la virgule, ainsi qu'un texte supplémentaire s'il existe.
+        Comportement:
+        - Affiche ou masque le label selon les paramètres d'affichage ou si du texte est déjà présent.
+        - Calcule la position finale du label avec un décalage pour éviter l'obstruction du point d'entité.
+        - Transforme la position géographique en coordonnées de pixels sur l'écran.
+        - Prend en compte la largeur du panneau latéral dans l'application pour ajuster la position du label.
+        - Vérifie si le label reste dans les limites visibles du canevas avant de l'afficher et de le positionner.
+        - Ajuste la taille du label selon le texte généré.
+
+        Ce processus assure que le label est correctement positionné à l'écran tout en s'adaptant aux contraintes d'affichage et aux décalages nécessaires pour éviter des chevauchements visuels.
         """
         self.need_update_label = False
 
@@ -413,6 +633,16 @@ class MapEntity:
             self.hide_label()
 
     def generate_description_label(self, show_name: bool, show_position: bool) -> str:
+        """
+        Génère l'étiquette descriptive basée sur les paramètres fournis.
+
+        Paramètres:
+        show_name (bool): Indique si le nom doit être inclus dans la description.
+        show_position (bool): Indique si la position (latitude, longitude, altitude) doit être incluse dans la description.
+
+        Retourne:
+        str: Une chaîne de caractères contenant la description générée.
+        """
         description = ""
         if show_name:
             description += f"{self.get_name()}"
@@ -431,17 +661,26 @@ class MapEntity:
 
     def hide_label(self):
         """
-        Cache l'étiquette (label) en la rendant invisible.
+        Masque l'étiquette.
         """
         self.label.setVisible(False)
 
     def show_label(self):
         """
-        Affiche l'étiquette en la rendant visible.
+        Affiche  l'étiquette
         """
         self.label.setVisible(True)
 
     def unload(self):
+        """
+        Décharge les éléments associés à l'instance de l'objet.
+
+        Si l'objet possède une étiquette (`label`), cette méthode effectue les opérations suivantes :
+        - Appelle la méthode `hide_label()` pour masquer l'étiquette.
+        - Détache l'étiquette en retirant le parent défini avec `setParent(None)`.
+        - Supprime l'étiquette avec `deleteLater`.
+        - Réinitialise l'attribut `label` à `None`.
+        """
         if self.label:
             self.hide_label()
             self.label.setParent(None)

@@ -12,7 +12,6 @@ from .action_arrow import ActionArrow
 from .action_change_icon import ActionChangeIcon
 from .action_unload import ActionUnload
 
-
 class ActionFactory:
     @staticmethod
     def action_from_dict(data: dict):

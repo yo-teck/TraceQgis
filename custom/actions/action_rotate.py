@@ -1,15 +1,37 @@
 from .action import Action
 from ..utils.utils import Utils
 
-
 class ActionRotate(Action):
+    """
+    Classe ActionRotate permet de faire tournée une entité
+    """
     def __init__(self, start_at: int, end_at: int, entity_id: int, angle: float, text: str = ""):
+        """
+        Initialise une instance de la classe avec les paramètres spécifiés.
+
+        Paramètres:
+        start_at (int): Position de départ.
+        end_at (int): Position de fin.
+        entity_id (int): Identifiant de l'entité associée.
+        angle (float): Valeur de l'angle à utiliser.
+        text (str): Texte facultatif lié à l'instance. Par défaut, une chaîne vide est utilisée.
+        """
         super().__init__(start_at, end_at, entity_id, text)
 
         self.start_angle = angle
         self.end_angle = angle
 
     def execute(self) -> bool:
+        """
+        Retourne :
+            bool : True si l'opération réussit, sinon False.
+
+        Logique :
+        - Récupère la(es) entité(s) de carte correspondantes à partir des identifiants spécifiés.
+        - Vérifie la(es) entité(s)
+        - Calcule de la rotation intermediaire
+        - Mise à jour de la rotation
+        """
         from ..business.layer_trace_qgis import LayerTraceQGIS
 
         map_entity = LayerTraceQGIS.get_map_entity(self.entity_id)
