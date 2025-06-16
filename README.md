@@ -1,8 +1,39 @@
-# Carto
+# Trace QGIS
 
-## 1. Installation des bibliothèques Python
+Trace QGIS est un plugin pour QGIS qui permet de charger, visualiser et animer des entités géographiques en fonction d’actions définies dans des plans (ex : PDDL).
+Il permet de représenter les mouvements d’entités sur une carte, de générer des traces et de gérer des scénarios dynamiques.
+## Installation
+### Prérequis
 
-Avant d'utiliser ce plugin, vous devez installer les bibliothèques nécessaires (jsonschema et pyyaml) dans l'environnement Python de QGIS.
+QGIS ≥ 3.x (compatible avec les versions LTR comme 3.28 ou 3.40)
+Python 3.x (fourni avec QGIS)
+Avoir un environnement QGIS configuré avec un profil utilisateur
+Dépendance python: jsonschema, pyyaml, pddlpy
+
+### Installation manuelle
+
+#### 1. Téléchargement 
+
+Télécharger le zip directement depuis le dépôt officiel : https://github.com/yo-teck/TraceQgis
+
+#### 2. Installation des dépendances 
+
+Ouvrir "OSGeo4W Shell" installer les dépendances suivante : jsonschema, pyyaml, pddlpy
+
+```pip install jsonschema pyyaml pddlpy```
+
+#### 3. Instalation du plugin via QGIS
+
+Démarrez QGIS (ou redémarrez-le si déjà ouvert).
+
+Menu Extensions → Installer/Gérer les extensions
+Puis Installer depuis un ZIP
+
+Cherchez votre fichier ZIP et installer le.
+
+2 boutons vert devrait apparaitre appuyez sur le premier "TraceQGIS" et appuyez sur démo
+
+## Lancer les tests unitaires
 
 ### 1. Localise l’interpréteur Python utilisé par QGIS.
 
