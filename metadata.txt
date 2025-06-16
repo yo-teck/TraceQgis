@@ -5,15 +5,15 @@
 [general]
 name=TraceQGIS
 qgisMinimumVersion=3.0
-description=Permet le générer des traces a parti de fichier JSON
-version=0.1
+description=
+version=1.0
 author=DOMINGO Yoann, ITEPRAT Hugo
 email=domingo.yoann@gmail.com
 
-about=Provide a brief description of the plugin and its purpose.
+about=Trace QGIS pour QGIS permet de visualiser et animer des entités géographiques en fonction de plans et d’actions définis dans des fichiers ou scénarios exprimés via le PDDL (Planning Domain Definition Language).
 
-tracker=http://bugs
-repository=http://repo
+# tracker=https://github.com/yo-teck/TraceQgis
+repository=https://github.com/yo-teck/TraceQgis
 # End of mandatory metadata
 
 # Recommended items:
@@ -25,7 +25,7 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=python
 
-homepage=http://homepage
+# homepage=http://homepage
 category=Plugins
 icon=icon.png
 # experimental flag
@@ -45,3 +45,4 @@ Category of the plugin: Raster, Vector, Database or Web
 # If the plugin can run on QGIS Server.
 server=False
 
+license=GPL v3
