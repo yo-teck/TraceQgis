@@ -680,11 +680,8 @@ class LayerTraceQGIS(QObject):
         """
         Actualise le focus sur l'entité courante si elle est définie.
 
-        Si aucun focus n'est défini, la méthode retourne immédiatement.
-        Vérifie si l'entité correspondant au focus actuel existe toujours.
-        Si l'entité n'existe pas, réinitialise le focus à une valeur nulle et arrête le processus.
-
-        Si l'entité existe, calcule le centre de sa géométrie, repositionne le centre de la carte sur ce point et rafraîchit l'affichage du canevas cartographique.
+        Si l'entité existe, calcule le centre de sa géométrie, repositionne le centre de la carte sur ce point
+        et rafraîchit l'affichage du canevas cartographique.
         """
         if not self.focus:
             return
@@ -713,15 +710,39 @@ class LayerTraceQGIS(QObject):
                 map_entity.update_label_position(False, False)
 
     def toggle_show_information_name(self, state: bool):
+        """
+        Permet d'afficher ou non le nom de l'entitée sur la carte
+
+        Paramètres:
+        state (bool): Détermine si le nom sera affiché ou masqué.
+        """
         self.show_name = state
         self.update_all_labels()
 
     def toggle_show_information_position(self, state):
+        """
+        Permet d'afficher ou non la position de l'entitée sur la carte
+
+        Paramètres:
+        state (bool): Détermine si le position sera affiché ou masqué.
+        """
         self.show_position = state
         self.update_all_labels()
 
 
     def load_entity(self, entity: 'MapEntity', entity_load: 'MapEntity'):
+        """
+        Permet de charger une entité dans une autre.
+
+        Paramètres:
+        entity (MapEntity): L'entité à charger.
+        entity_load (MapEntity): L'entité dans lequel elle est charger.
+
+        Comportement:
+        - Vérifie si l'identifiant de l'entité principale est déjà dans le dictionnaire des entités chargées.
+        - Si ce n'est pas le cas, initialise une nouvelle liste pour cet identifiant.
+        - Ajoute l'entité associée dans la liste des entités chargées pour l'entité principale, si elle n'est pas déjà incluse.
+        """
         entity_id = entity.get_id()
         if entity_id not in self.entities_loaded:
             self.entities_loaded[entity_id] = []
@@ -730,6 +751,18 @@ class LayerTraceQGIS(QObject):
             self.entities_loaded[entity_id].append(entity_load)
 
     def unload_entity(self, entity: 'MapEntity', entity_load: 'MapEntity'):
+        """
+        Permet de décharger une entité
+
+        Paramètres:
+        entity : MapEntity
+            L'entité à décharger.
+        entity_load : MapEntity
+            L'entité cible qui doit être retirée du groupe d'entités chargées.
+
+        Description:
+        Vérifie si l'entité source est présente dans les entités chargées. Si elle l'est, retire l'entité cible du groupe associé. Si le groupe devient vide après le retrait, il est complètement supprimé.
+        """
         group_id = entity.get_id()
         target_id = entity_load.get_id()
 
@@ -741,6 +774,18 @@ class LayerTraceQGIS(QObject):
                 del self.entities_loaded[group_id]
 
     def is_loaded(self, entity_load: 'MapEntity', in_entity: 'MapEntity' = None) -> bool:
+        """
+        Vérifie si une entité est chargée dans une entité ou simplement chargé
+
+        Paramètres:
+        - entity_load : 'MapEntity'
+          L'entité dont il faut vérifier le chargement.
+        - in_entity : 'MapEntity', optionnel (par défaut None)
+          Le groupe dans lequel vérifier si l'entité est chargée. Si None, vérifie dans tous les groupes.
+
+        Retourne:
+        - bool : True si l'entité est chargée, False sinon.
+        """
         if in_entity is None:
             # Vérifie si l'entité est chargée dans n'importe quel groupe
             return any(entity_load in loaded_list for loaded_list in self.entities_loaded.values())
@@ -749,6 +794,19 @@ class LayerTraceQGIS(QObject):
             return entity_load in self.entities_loaded.get(group_id, [])
 
     def is_loaded_by_id(self, entity_id: str, in_entity_id: str = None) -> bool:
+        """
+        Vérifie si une entité avec un identifiant donné est chargée.
+
+        Paramètres:
+        entity_id: str
+            L'identifiant de l'entité à vérifier.
+        in_entity_id: str, optionnel
+            L'identifiant d'une entité spécifique où effectuer la recherche.
+
+        Retourne:
+        bool
+            True si l'entité est chargée, False autrement.
+        """
         if in_entity_id is None:
             return any(
                 any(e.get_id() == entity_id for e in loaded_list)
@@ -760,6 +818,9 @@ class LayerTraceQGIS(QObject):
             )
 
     def refresh_load(self):
+        """
+       Partie du refresh qui traite les entitées chargée
+       """
         ids = [entity.get_id() for entity in self.map_entities.values() if self.is_loaded(entity)]
 
         if ids:
@@ -774,7 +835,38 @@ class LayerTraceQGIS(QObject):
         else:
             self.layer.setSubsetString("")
 
+
+    def log_trace(self, entity: 'MapEntity', old_point: QgsPointXY):
+        """
+        Enregistre une trace d'un déplacement d'entité dans la couche de trace.
+
+        Paramètres:
+        entity (MapEntity): L'entité cartographique concernée.
+        old_point (QgsPointXY): Le point précédent de l'entité.
+
+        Cette méthode crée une nouvelle entité dans la couche de trace représentant
+        le déplacement de l'entité cartographique. La géométrie de la nouvelle entité
+        est une ligne reliant l'ancien point à la position actuelle de l'entité. Les
+        attributs "id" et "nom" de l'entité sont également définis.
+        """
+        feature = QgsFeature(self.layer_trace.fields())
+        feature.setGeometry(QgsGeometry.fromPolylineXY([old_point, entity.feature.geometry().asPoint()]))
+        feature.setAttribute("id", entity.get_id())
+        feature.setAttribute("nom", entity.get_name())
+        self.layer_trace.dataProvider().addFeature(feature)
+
     def unload(self):
+        """
+        Décharge les ressources, déconnecte les signaux et libère les couches et entités cartographiques associées.
+
+        Cette méthode effectue les actions suivantes :
+        - Arrête le minuteur utilisé par l'application.
+        - Déconnecte les signaux liés au changement d'extension de la carte et au rafraîchissement.
+        - Vide toutes les entités cartographiques et libère les ressources associées.
+        - Supprime les couches de points, de lignes et de traces si elles existent.
+        - Supprime le groupe "Trace QGIS" du projet QGIS.
+        - Réinitialise l'instance singleton de LayerTraceQGIS à None.
+        """
         self.stop_timer()
         iface.mapCanvas().extentsChanged.disconnect(self.update_all_labels)
         self.timer.timeout.disconnect(self.refresh)
@@ -808,13 +900,6 @@ class LayerTraceQGIS(QObject):
                 parent.removeChildNode(group)
 
         LayerTraceQGIS._instance = None
-
-    def log_trace(self, entity: 'MapEntity', old_point: QgsPointXY):
-        feature = QgsFeature(self.layer_trace.fields())
-        feature.setGeometry(QgsGeometry.fromPolylineXY([old_point, entity.feature.geometry().asPoint()]))
-        feature.setAttribute("id", entity.get_id())
-        feature.setAttribute("nom", entity.get_name())
-        self.layer_trace.dataProvider().addFeature(feature)
 
     @staticmethod
     def get_map_entity(entity_id: int):

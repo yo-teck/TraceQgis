@@ -2,9 +2,33 @@ from ..utils.utils import Utils
 
 from .action import Action
 
-
 class ActionAround(Action):
+    """
+    Classe ActionAround permet de déplacer une entité est déplacé autour d'un autre
+
+    """
     def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, distance: float = 100, angle: float = 360, text: str = ""):
+        """
+        Initialise une instance de la classe avec les paramètres donnés.
+
+        Paramètres:
+        start_at (int): Position de départ.
+        end_at (int): Position de fin.
+        entity_id (int): Identifiant de l'entité de base.
+        entity_id2 (int): Identifiant secondaire de l'entité.
+        distance (float): Distance associée, valeur par défaut 100.
+        angle (float): Angle associé, valeur par défaut 360.
+        text (str): Texte optionnel associé, valeur par défaut chaîne vide.
+
+        Attributs définis:
+        entity_id2 (int): Stocke l'identifiant secondaire de l'entité.
+        distance (float): Stocke la distance associée.
+        angle (float): Stocke l'angle associé.
+        init (bool): Indique si une initialisation supplémentaire est terminée, par défaut False.
+        center_lat (float ou None): Latitude centrale, initialisée à None.
+        center_lon (float ou None): Longitude centrale, initialisée à None.
+        origin_angle (float ou None): Angle d'origine, initialisé à None.
+        """
         super().__init__(start_at, end_at, entity_id, text)
 
         self.entity_id2 = entity_id2
@@ -16,6 +40,18 @@ class ActionAround(Action):
         self.origin_angle = None
 
     def execute(self) -> bool:
+        """
+        Retourne :
+            bool : True si l'opération réussit, sinon False.
+
+        Logique :
+        - Récupère les entités de carte correspondantes à partir des identifiants spécifiés.
+        - Vérifie les entités
+        - A la première execution récupére la position de l'entité cible et l'angle d'origine.
+        - Calcule des positions intermediaire l'entité.
+        - Déplace l'entité sur la carte selon les coordonnées calculées et un angle progressif.
+        - Conserve dans les journaux la trace du mouvement depuis la position précédente.
+        """
         from ..business.layer_trace_qgis import LayerTraceQGIS
 
         map_entity = LayerTraceQGIS.get_map_entity(self.entity_id)

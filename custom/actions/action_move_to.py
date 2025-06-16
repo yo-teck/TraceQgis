@@ -10,7 +10,32 @@ if TYPE_CHECKING:
 from .action import Action
 
 class ActionMoveTo(Action):
+    """
+    Classe ActionMoveTo permet de déplacer une entité vers une autre entité a une distance donnée.
+    """
     def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, distance: float = 100, text: str = ""):
+        """
+        Constructeur pour initialiser une instance avec des paramètres spécifiques.
+
+        Paramètres:
+        start_at (int): Position de départ.
+        end_at (int): Position de fin.
+        entity_id (int): Identifiant de l'entité.
+        entity_id2 (int): Second identifiant de l'entité.
+        distance (float): Distance entre deux entités, par défaut 100.
+        text (str): Texte associé à l'entité, par défaut une chaîne vide.
+
+        Attributs:
+        entity_id2 (int): Second identifiant de l'entité.
+        distance (float): Distance entre deux entités.
+        init (bool): Indicateur d'initialisation, par défaut False.
+        lat_from (NoneType): Latitude de l'origine, initialisée à None.
+        lon_from (NoneType): Longitude de l'origine, initialisée à None.
+        lat_to (NoneType): Latitude de la destination, initialisée à None.
+        lon_to (NoneType): Longitude de la destination, initialisée à None.
+        alti_from (NoneType): Altitude de l'origine, initialisée à None.
+        alti_to (NoneType): Altitude de la destination, initialisée à None.
+        """
         super().__init__(start_at, end_at, entity_id, text)
 
         self.entity_id2 = entity_id2
@@ -24,6 +49,18 @@ class ActionMoveTo(Action):
         self.alti_to = None
 
     def execute(self) -> bool:
+        """
+        Retourne :
+            bool : True si l'opération réussit, sinon False.
+
+        Logique :
+        - Récupère la(es) entité(s) de carte correspondantes à partir des identifiants spécifiés.
+        - Vérifie la(es) entité(s).
+        - Recupère la position de l'entité cible au premier temps
+        - Calcule des positions intermediaire l'entité.
+        - Déplace l'entité sur la carte selon les coordonnées calculées
+        - Conserve dans les journaux la trace du mouvement depuis la position précédente
+        """
         from ..business.layer_trace_qgis import LayerTraceQGIS
 
         map_entity = LayerTraceQGIS.get_map_entity(self.entity_id)
@@ -57,6 +94,19 @@ class ActionMoveTo(Action):
         return True
 
     def get_next_geometry(self) -> Tuple[float, float, float]:
+        """
+        Calcule et retourne les coordonnées géométriques (latitude, longitude et altitude) interpolées entre un point de départ et un point d'arrivée à un moment donné.
+
+        Cette méthode utilise l'algorithme de la formule de Haversine pour calculer la distance entre deux points géographiques et effectue une interpolation linéaire pour déterminer la position à un instant précis dans une période de temps donnée.
+
+        Retourne les coordonnées finales si l'instant actuel dépasse ou est égal à la fin de la période ou si la durée est nulle.
+
+        Retour:
+            Tuple contenant la latitude, la longitude et l'altitude interpolées ou finales.
+
+        Exceptions:
+            - Assure que les valeurs temporelles et géographiques soient valides pour effectuer le calcul.
+        """
         from ..business.layer_trace_qgis import LayerTraceQGIS
 
         current_tick = LayerTraceQGIS.get_current_tick()
@@ -89,4 +139,3 @@ class ActionMoveTo(Action):
         alti = self.alti_from + (self.alti_to - self.alti_from) * ratio
 
         return lat, lon, alti
-
