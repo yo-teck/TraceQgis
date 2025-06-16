@@ -1,10 +1,11 @@
 import os
 
 from ..custom.manager.domain_problem_manager import DomainProblemManager
-from qgis.PyQt import uic
-from qgis.PyQt import QtWidgets
+from qgis.PyQt import uic, QtWidgets
 from PyQt5.QtWidgets import QMessageBox, QFileDialog, QPushButton
 from ..custom.utils.yaml_helper import YamlHelper
+from PyQt5.QtCore import pyqtSignal
+
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -23,6 +24,8 @@ class TraceQGISDialogFile(QtWidgets.QDialog, FORM_CLASS):
     Attributs :
     - data : Contient les données chargées à partir du fichier sélectionné.
     """
+
+    signal_lauch_demo = pyqtSignal(bool)
 
     def __init__(self, parent=None):
         """
@@ -52,7 +55,7 @@ class TraceQGISDialogFile(QtWidgets.QDialog, FORM_CLASS):
 
         self.buttonBox.accepted.connect(self.validate)
         self.pushButton.clicked.connect(self.download_yaml)
-
+        self.demo_button.clicked.connect(self.launch_demo)
 
     def get_configuration_file_path(self) -> str:
         """
@@ -157,5 +160,11 @@ class TraceQGISDialogFile(QtWidgets.QDialog, FORM_CLASS):
 
         self.accept()
 
+    def launch_demo(self):
+        self.signal_lauch_demo.emit(True)
+        self.close()
+
     def unload(self):
         self.buttonBox.accepted.disconnect(self.validate)
+        self.pushButton.clicked.disconnect(self.download_yaml)
+        self.demo_button.clicked.disconnect(self.launch_demo)

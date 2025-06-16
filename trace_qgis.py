@@ -74,11 +74,16 @@ class TraceQGIS:
         self.dock = None
         self.layerTraceQGIS = None
 
-
     def generate_entity(self):
+        # TODO
+        return []
 
-        image_drone = "C:\\Users\\domin\\Desktop\\Cours\\TER\\projet_qgis\\IMAGE_TEST\\sous-marin.png"
-        image_balise = "C:\\Users\\domin\\Desktop\\Cours\\TER\\projet_qgis\\IMAGE_TEST\\mer.png"
+    def demo_generate_entity(self):
+
+        plugin_dir = os.path.dirname(os.path.abspath(__file__))
+
+        image_drone = os.path.join(plugin_dir, 'assets', 'demo', 'sous-marin.png')
+        image_balise = os.path.join(plugin_dir, 'assets', 'demo', 'mer.png')
 
         entities = []
         # Coordonnées approximatives du Golfe de Saint-Tropez
@@ -115,13 +120,18 @@ class TraceQGIS:
 
         return entities
 
-
-
     def generate_action(self):
+        # TODO
+        return []
+
+    def demo_generate_action(self):
+
+        plugin_dir = os.path.dirname(os.path.abspath(__file__))
+
+        image_broadcast = os.path.join(plugin_dir, 'assets', 'demo', 'broadcast.png')
 
         center_lat = 43.29122571034485
         center_lon = 6.655847355159512
-        image_broadcast = "C:\\Users\\domin\\Desktop\\Cours\\TER\\projet_qgis\\IMAGE_TEST\\broadcast.png"
 
         actions = []
 
@@ -417,6 +427,8 @@ class TraceQGIS:
             self.layerTraceQGIS.signal_timer_changed.disconnect(self.dock.set_timer_on)
             self.layerTraceQGIS.signal_entities_updated.disconnect(self.dock.refresh_radio_buttons)
 
+            self.dlg.signal_lauch_demo.disconnect(self.launch_demo)
+
             self.dock.signal_tick_changed.disconnect(self.layerTraceQGIS.go_to_tick)
             self.dock.signal_focus_changed.disconnect(self.layerTraceQGIS.set_focus)
             self.dock.signal_toggle_timer.disconnect(self.layerTraceQGIS.toggle_timer)
@@ -425,7 +437,6 @@ class TraceQGIS:
             self.dock.signal_speed_changed.disconnect(self.layerTraceQGIS.change_interval_timer)
 
             self.layerTraceQGIS = None
-            #QMessageBox.warning(NoneNone, "Erreur", "LAYER UNLOAD")
 
         if self.dock is not None:
             self.dock.unload()
@@ -463,12 +474,17 @@ class TraceQGIS:
             self.layerTraceQGIS.signal_timer_changed.connect(self.dock.set_timer_on)
             self.layerTraceQGIS.signal_entities_updated.connect(self.dock.refresh_radio_buttons)
 
+            self.dlg.signal_lauch_demo.connect(self.launch_demo)
+
             self.dock.signal_tick_changed.connect(self.layerTraceQGIS.go_to_tick)
             self.dock.signal_focus_changed.connect(self.layerTraceQGIS.set_focus)
             self.dock.signal_toggle_timer.connect(self.layerTraceQGIS.toggle_timer)
             self.dock.signal_toggle_show_info_name.connect(self.layerTraceQGIS.toggle_show_information_name)
             self.dock.signal_toggle_show_info_position.connect(self.layerTraceQGIS.toggle_show_information_position)
             self.dock.signal_speed_changed.connect(self.layerTraceQGIS.change_interval_timer)
+
+    def launch_demo(self, demo: bool):
+        self.layerTraceQGIS.reset(self.demo_generate_entity(), self.demo_generate_action())
 
     def toggle_dock(self):
         if self.dock.isVisible():
