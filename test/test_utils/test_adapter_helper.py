@@ -169,3 +169,33 @@ def test_problem_to_yaml_data_config(tmp_path):
           },
           "fixed_position": []
         }
+
+
+def test_domain_problem_to_map_entity(tmp_path):
+    parser = create_parser_for_test(tmp_path)
+    configuration = parser.get_configuration()
+
+    configuration.fixed_position = [
+        parser.FixedPositionVar(var="?loc", x=10.0, y=20.0)
+    ]
+    configuration.init_predicats = {
+        "at": parser.Predicate(type=PredicatMapping.POSITION.value, mobile_var="?obj", fixed_var="?loc")
+    }
+    parser.initial_state = [
+        ("at", "package_1", "city_1", "truck_1", "?loc")
+    ]
+    parser.get_configuration = lambda: configuration  # forcer méthode simulée
+
+    entities = AdapterHelper.domain_problem_to_map_entity(parser)
+
+    assert isinstance(entities, list)
+    assert any(e.id == "?loc" for e in entities)
+    assert any(e.id == "package_1" for e in entities)
+
+    fixed_entity = next(e for e in entities if e.id == "?loc")
+    mobile_entity = next(e for e in entities if e.id == "package_1")
+
+    assert fixed_entity.get_latitude() == 20.0
+    assert fixed_entity.get_longitude() == 10.0
+    assert mobile_entity.get_latitude() == 20.0
+    assert mobile_entity.get_longitude() == 10.0

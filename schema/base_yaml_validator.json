@@ -65,14 +65,9 @@
       "properties": {
         "name": { "type": "string" },
         "start_at": { "type": "integer" },
-        "end_at": { "type": "integer" },
-        "entity_vars": {
-          "type": "array",
-          "items": { "type": "string" },
-          "minItems": 1
-        }
+        "end_at": { "type": "integer" }
       },
-      "required": ["name", "start_at", "end_at", "entity_vars"],
+      "required": ["name", "start_at", "end_at"],
       "additionalProperties": false
     },
     "action": {

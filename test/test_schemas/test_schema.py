@@ -37,8 +37,7 @@ VALID_JSON = {
                 {
                     "name": "rotate",
                     "start_at": 0,
-                    "end_at": 10,
-                    "entity_vars": ["?x", "?y"]
+                    "end_at": 10
                 }
             ]
         }
@@ -184,7 +183,6 @@ def test_action_missing_duration():
                     "name": "rotate",
                     "start_at": 0,
                     "end_at": 10,
-                    "entity_vars": ["?x", "?y"]
                 }
             ]
         }
@@ -212,46 +210,6 @@ def test_action_empty_animations_array():
         "load": {
             "duration": 10,
             "animations": []
-        }
-    }
-    with pytest.raises(ValidationError):
-        validate(instance=wrong_json, schema=schema)
-
-def test_animation_missing_entity_vars():
-    schema = load_schema()
-    wrong_json = copy.deepcopy(VALID_JSON)
-    # Supprime 'entity_vars' d'une animation
-    wrong_json['actions'] = {
-        "load": {
-            "duration": 10,
-            "animations": [
-                {
-                    "name": "rotate",
-                    "start_at": 0,
-                    "end_at": 10
-                    # 'entity_vars' manquant
-                }
-            ]
-        }
-    }
-    with pytest.raises(ValidationError):
-        validate(instance=wrong_json, schema=schema)
-
-def test_animation_entity_vars_not_list():
-    schema = load_schema()
-    wrong_json = copy.deepcopy(VALID_JSON)
-    # 'entity_vars' n'est pas une liste
-    wrong_json['actions'] = {
-        "load": {
-            "duration": 10,
-            "animations": [
-                {
-                    "name": "rotate",
-                    "start_at": 0,
-                    "end_at": 10,
-                    "entity_vars": "?x"
-                }
-            ]
         }
     }
     with pytest.raises(ValidationError):

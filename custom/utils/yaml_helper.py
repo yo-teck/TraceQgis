@@ -4,6 +4,7 @@ import yaml
 from typing import Any, Dict
 from jsonschema import validate, ValidationError
 
+from ..business.dm_carto_configuration_model import DmCartoConfigurationModel
 from ..business.domain_problem_model import DomainProblemModel
 from ..enums.action_mapping import ActionType
 from ..utils.adapter_helper import AdapterHelper
@@ -12,7 +13,7 @@ from ..utils.adapter_helper import AdapterHelper
 class YamlHelper:
 
     @staticmethod
-    def read_file(file_path: str, schema_path: str) -> Dict[str, Any]:
+    def read_file(file_path: str, schema_path: str) -> DmCartoConfigurationModel:
         """
         Lit et valide un fichier YAML avec un schéma JSON (en YAML ou JSON).
 
@@ -57,19 +58,26 @@ class YamlHelper:
         except ValidationError as e:
             raise ValueError(f"Validation échouée : {e.message}")
 
-        return data
+        dmc = DmCartoConfigurationModel()
+        dmc.load_from_parsed(data)
+        return dmc
 
     @staticmethod
     def validate_actions(data):
-        for action in data['actions']:
+        for action in data['actions'].values():
             for animation in action['animations']:
                 YamlHelper.validate_animation(animation)
 
     @staticmethod
     def validate_animation(animation):
-        action_enum = YamlHelper.get_action_type_by_value(animation['name'])
+        if 'name' not in animation:
+            raise ValueError("Le champ 'name' est requis pour identifier le type d'animation.")
+
+        name = animation['name']
+        action_enum = YamlHelper.get_action_type_by_value(name)
         if action_enum is None:
-            raise ValueError(f"Action type {animation['name']} n'est pas valide.")
+            raise ValueError(f"Action type {name} n'est pas valide.")
+
         try:
             validate(instance=animation, schema=action_enum.schema)
         except ValidationError as e:

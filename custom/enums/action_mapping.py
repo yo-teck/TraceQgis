@@ -193,3 +193,10 @@ class ActionType(Enum):
 
     def get_schema(self):
         return self.schema
+
+    @classmethod
+    def from_str(cls, type_str: str):
+        for member in cls:
+            if member.value == type_str:
+                return member
+        raise ValueError(f"Unknown ActionType: {type_str}")
