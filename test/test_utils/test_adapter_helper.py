@@ -385,3 +385,51 @@ def test_add_predicat_position_missing_fixed_entity(tmp_path):
     with pytest.raises(ValueError, match="Pas de variable trouvé à ce nom"):
         AdapterHelper.add_predicat_position_to_map_entity_list("at", config.init_predicats["at"], fixed_entities, parser)
 
+def test_domain_problem_to_actions(tmp_path):
+    parser = create_parser_for_test(tmp_path)
+    config = DmCartoConfigurationModel()
+    config.load_from_parsed(CONFIG_DATA)
+    parser.save_configuration(config)
+
+    actions = AdapterHelper.domain_problem_to_actions(parser)
+
+    assert len(actions) == 3  # 3 actions dans le plan
+    assert actions[0]["type"] == "load"
+    assert actions[1]["type"] == "move"
+    assert actions[2]["type"] == "unload"
+    assert actions[0]["start_at"] == 0
+    assert actions[1]["start_at"] == DEFAULT_ANIMATION_DURATION
+    assert actions[2]["start_at"] == 2 * DEFAULT_ANIMATION_DURATION
+
+from custom.enums.action_mapping import ActionType
+from custom.business.dm_carto_configuration_model import Animation
+
+def test_animation_to_action_variable_resolution(tmp_path):
+    parser = create_parser_for_test(tmp_path)
+    config = DmCartoConfigurationModel()
+    config.load_from_parsed(CONFIG_DATA)
+    parser.save_configuration(config)
+
+    animation = Animation(
+        action_type=ActionType.LOAD,
+        start_at=0,
+        end_at=5,
+        attributes={
+            "var_object_who_load": "?truck",
+            "var_object_loaded": "?pkg",
+            "text": "Test"
+        }
+    )
+
+    an_exec = {
+        "action": "LOAD-TRUCK",
+        "args": ["obj1", "tru1", "pos1"]
+    }
+
+    result = AdapterHelper.animation_to_action(an_exec, animation, 0, parser)
+
+    assert result["type"] == "load"
+    assert result["start_at"] == 0
+    assert result["entity_id"] == "tru1"
+    assert result["entity_id2"] == "obj1"
+    assert result["text"] == "Test"

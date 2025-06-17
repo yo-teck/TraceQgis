@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from ..business.dm_carto_configuration_model import Predicate
+from ..business.dm_carto_configuration_model import Predicate, Action, Animation
 from ..business.domain_problem_model import DomainProblemModel
 from ..business.map_entity import MapEntity
 from ..constants.pddl_yaml import DEFAULT_ANIMATION_DURATION
@@ -95,3 +95,41 @@ class AdapterHelper:
                 raise ValueError("Pas de variable trouvé à ce nom")
             var_name_mobile = init_predicat[index_mobile_var]
             list_entities.append(MapEntity(var_name_mobile, var_name_mobile, dp.get_sprite_url_by_var(var_name_mobile), fixed_entity.get_latitude(), fixed_entity.get_longitude()))
+
+    @staticmethod
+    def domain_problem_to_actions(domain_problem_model: DomainProblemModel) -> list[Action]:
+        execution_sequences = domain_problem_model.get_execution_sequence()
+        configuration = domain_problem_model.get_configuration()
+        actions = []
+        time = 0 #Init
+        for an_exec in execution_sequences:
+            current_action = configuration.actions[an_exec["action"]]
+            if current_action is None:
+                raise ValueError("Pas d'action paramétré pour " + an_exec["action"] )
+            for animation in current_action.animations:
+                actions.append(AdapterHelper.animation_to_action(an_exec, animation, time, domain_problem_model))
+            time += current_action.duration
+        return actions
+
+
+    @staticmethod
+    def animation_to_action(an_exec: dict, animation: Animation, start_time: int, domain_problem: DomainProblemModel )-> dict:
+        mapping = animation.action_type.get_map_properties()
+        action = {
+            "type": animation.action_type.get_type_name(),
+            "start_at": start_time + animation.start_at,
+            "end_at": start_time + animation.end_at,
+        }
+
+        for attribute in animation.attributes:
+            value_attribute = animation.attributes[attribute]
+            if attribute.startswith("var_"):
+                action_dp = domain_problem.get_action_parameters()[an_exec["action"]]
+                if action_dp is None:
+                    raise ValueError("Action " + an_exec["action"] + " non trouvé dans le domain problem")
+                index_var = next((i for i, t in enumerate(action_dp) if t[0] == value_attribute), -1)
+                value_attribute = an_exec["args"][index_var]
+
+            action[animation.action_type.get_mapping_value(attribute)] = value_attribute
+
+        return action
