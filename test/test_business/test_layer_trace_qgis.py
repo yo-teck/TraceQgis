@@ -2,7 +2,6 @@
 
 import pytest
 from qgis.core import QgsFeature, QgsGeometry, QgsPointXY, QgsRendererCategory,QgsMarkerSymbol
-from unicodedata import category
 
 from custom.business.layer_trace_qgis import LayerTraceQGIS
 
