@@ -786,6 +786,9 @@ class LayerTraceQGIS(QObject):
         Retourne:
         - bool : True si l'entité est chargée, False sinon.
         """
+        if not self.entities_loaded:
+            return False
+
         if in_entity is None:
             # Vérifie si l'entité est chargée dans n'importe quel groupe
             return any(entity_load in loaded_list for loaded_list in self.entities_loaded.values())
@@ -910,13 +913,13 @@ class LayerTraceQGIS(QObject):
         return int(LayerTraceQGIS.get_instance().tick)
 
     @staticmethod
-    def static_load_entity(entity: 'MapEntity', entity_load: 'MapEntity'):
-        LayerTraceQGIS.get_instance().load_entity(entity, entity_load)
+    def static_load_entity(entity: 'MapEntity', entity_load: 'MapEntity') -> bool:
+        return LayerTraceQGIS.get_instance().load_entity(entity, entity_load)
 
     @staticmethod
-    def static_unload_entity(entity: 'MapEntity', entity_load: 'MapEntity'):
-        LayerTraceQGIS.get_instance().unload_entity(entity, entity_load)
+    def static_unload_entity(entity: 'MapEntity', entity_load: 'MapEntity') -> bool:
+        return LayerTraceQGIS.get_instance().unload_entity(entity, entity_load)
 
     @staticmethod
-    def static_is_loaded(entity_load: 'MapEntity', in_entity: 'MapEntity' = None):
-        LayerTraceQGIS.get_instance().is_loaded(entity_load, in_entity)
+    def static_is_loaded(entity_load: 'MapEntity', in_entity: 'MapEntity' = None) -> bool:
+        return LayerTraceQGIS.get_instance().is_loaded(entity_load, in_entity)

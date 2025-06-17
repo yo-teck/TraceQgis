@@ -4,7 +4,7 @@ class ActionUnload(Action):
     """
     Classe ActionUnload permet de décharger une entitée
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, text: str):
+    def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, text: str = ""):
         """
         Initialise une instance de la classe avec les paramètres donnés.
 
@@ -33,7 +33,7 @@ class ActionUnload(Action):
 
         map_entity = LayerTraceQGIS.get_map_entity(self.entity_id)
         map_entity2 = LayerTraceQGIS.get_map_entity(self.entity_id2)
-        if (not map_entity or not map_entity2) and LayerTraceQGIS.is_loaded(map_entity2, map_entity):
+        if not map_entity or not map_entity2 or not LayerTraceQGIS.static_is_loaded(map_entity2, map_entity):
             return False
 
         current_tick = LayerTraceQGIS.get_current_tick()
