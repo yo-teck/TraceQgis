@@ -5,7 +5,7 @@ class ActionChangeSize(Action):
     """
     Classe ActionChangeSize permet de modifier la taille d'une entité au cours du temps.
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, size: float, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, size: float, text: str = ""):
         """
         Initialise une instance de la classe.
 

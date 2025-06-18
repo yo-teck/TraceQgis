@@ -5,7 +5,7 @@ class ActionArrow(Action):
     Classe ActionArrow représente une action permettant de tracer une flèche entre deux entités.
     """
 
-    def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, entity_id2: str, text: str = ""):
         """
         Initialise une instance de la classe avec des détails spécifiques sur les entités.
 

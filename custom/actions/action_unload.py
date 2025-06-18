@@ -4,7 +4,7 @@ class ActionUnload(Action):
     """
     Classe ActionUnload permet de décharger une entitée
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, entity_id2: str, text: str = ""):
         """
         Initialise une instance de la classe avec les paramètres donnés.
 

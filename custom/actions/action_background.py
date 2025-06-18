@@ -4,7 +4,7 @@ class ActionBackground(Action):
     """
     Classe ActionBackground représentant une action permettant de modifier l'image d'arrière-plan d'une entité sur une carte.
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, image: str, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, image: str, text: str = ""):
         """
         Initialise une nouvelle instance de la classe.
 

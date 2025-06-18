@@ -75,10 +75,6 @@ class TraceQGIS:
         self.dock = None
         self.layerTraceQGIS = None
 
-    def generate_entity(self):
-        # TODO
-        return []
-
     def demo_generate_entity(self):
 
         plugin_dir = os.path.dirname(os.path.abspath(__file__))
@@ -120,10 +116,6 @@ class TraceQGIS:
             entities.append(balise)
 
         return entities
-
-    def generate_action(self):
-        # TODO
-        return []
 
     def demo_generate_action(self):
 
@@ -294,10 +286,6 @@ class TraceQGIS:
 
         return actions
 
-    def init_trace(self):
-
-        self.layerTraceQGIS.reset(self.generate_entity(), self.generate_action())
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -460,12 +448,6 @@ class TraceQGIS:
 
         # show the dialog
         self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            self.init_trace()
-            pass
 
     def init_layer_trace_qgis(self):
         if self.layerTraceQGIS is None:

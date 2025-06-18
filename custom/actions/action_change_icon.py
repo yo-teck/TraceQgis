@@ -4,7 +4,7 @@ class ActionChangeIcon(Action):
     """
         Cette classe représente une action pour changer l'icône d'une entité
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, image: str, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, image: str, text: str = ""):
         """
         Initialise une instance de la classe avec des informations spécifiques.
 

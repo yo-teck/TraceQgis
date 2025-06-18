@@ -5,7 +5,7 @@ class ActionRotate(Action):
     """
     Classe ActionRotate permet de faire tournée une entité
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, angle: float, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, angle: float, text: str = ""):
         """
         Initialise une instance de la classe avec les paramètres spécifiés.
 

@@ -108,7 +108,7 @@ class AdapterHelper:
                 continue
             for animation in current_action.animations:
                 actions.append(AdapterHelper.animation_to_action(an_exec, animation, time, domain_problem_model))
-            time += current_action.duration
+            time += current_action.duration + 1
         return actions
 
 

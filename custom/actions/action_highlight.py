@@ -5,7 +5,7 @@ class ActionHighlight(Action):
         Classe ActionHighlight permet de mettre en évidence une entité cartographique sur une carte avec une couleur spécifique.
         Elle prend en charge différentes couleurs pour la mise en évidence et s'assure que seules certaines couleurs prédéfinies sont acceptées.
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, color: str = "yellow", text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, color: str = "yellow", text: str = ""):
         """
         Initialise une instance avec les paramètres fournis.
 
