@@ -504,7 +504,7 @@ def test_reset_calls_all_reset_methods(mocker):
         "reset_opacity",
         "reset_highlight",
         "reset_background_image",
-        "update_label_position",
+        "reset_label",
     ]
 
     for method in methods:
@@ -642,7 +642,7 @@ def test_unload_removes_label(mocker):
 
     entity.unload()
 
-    mock_label.hide.assert_called_once()
+    mock_label.setVisible.assert_called_once_with(False)
     mock_label.setParent.assert_called_once_with(None)
     mock_label.deleteLater.assert_called_once()
     assert entity.label is None

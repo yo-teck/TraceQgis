@@ -2,7 +2,6 @@
 
 import pytest
 from qgis.core import QgsFeature, QgsGeometry, QgsPointXY, QgsRendererCategory,QgsMarkerSymbol
-from unicodedata import category
 
 from custom.business.layer_trace_qgis import LayerTraceQGIS
 
@@ -269,18 +268,8 @@ def test_apply_trace_renderer(mocker, mock_map_entity, mock_map_entity2):
 
     mock_generate_category = mocker.patch.object(instance.layer_trace, "setRenderer")
 
-    instance.apply_renderer()
+    instance.apply_trace_renderer()
     mock_generate_category.assert_called_once()
-
-def test_reset_before_refresh(mocker, mock_map_entity):
-    mocker.patch("custom.business.layer_trace_qgis.iface")
-    instance = LayerTraceQGIS([], [])
-    instance.map_entities = {"e1": mock_map_entity}
-    instance.lines = [[1, 2]]
-    mocker.patch.object(instance, 'has_need_refresh_categories_after', return_value=True)
-
-    instance.reset_before_refresh()
-    mock_map_entity.reset_icon.assert_called_once()
 
 def test_draw_line_between(mocker, mock_map_entity, mock_map_entity2):
     mocker.patch("custom.business.layer_trace_qgis.iface")
