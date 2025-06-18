@@ -2,7 +2,12 @@ from pddlpy import DomainProblem
 import re
 from typing import Dict, List, Tuple
 
+from .dm_carto_configuration_model import DmCartoConfigurationModel
+
+
 class DomainProblemModel:
+    configuration: DmCartoConfigurationModel | None = None
+
     def __init__(self, domain_path: str, problem_path: str, plan_path: str = None):
         self.domain_path = domain_path
         self.dp = DomainProblem(domain_path, problem_path)
@@ -27,8 +32,6 @@ class DomainProblemModel:
         # 6) Load plan if provided
         if plan_path:
             self.load_plan(plan_path)
-
-        self.configuration = None
 
     def _parse_predicates(self) -> Dict[str, List[Tuple[str,str]]]:
         text = open(self.domain_path, encoding="utf-8").read()
@@ -96,5 +99,14 @@ class DomainProblemModel:
 
     def get_execution_sequence(self) -> List[Dict]: return self._plan
 
-    def save_configuration(self, data) -> None:
+    def save_configuration(self, data: DmCartoConfigurationModel) -> None:
         self.configuration = data
+
+    def get_configuration(self) -> DmCartoConfigurationModel:
+        return self.configuration
+
+    def get_sprite_url_by_var(self, var: str) -> str:
+        if self.configuration is None:
+            raise ValueError("Pas de configuration chargée")
+
+        return self.configuration.get_sprite_url_by_object_type(self.get_object_type(var))

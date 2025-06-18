@@ -5,6 +5,7 @@ class ActionType(Enum):
         "move",
         "ActionMove",
         ["start_at", "end_at", "entity_id", "lat_from", "lon_from", "alti_from", "lat_to", "lon_to", "alti_to", "text"],
+        {},
         {}
     )
     MOVE_TO = (
@@ -19,6 +20,10 @@ class ActionType(Enum):
                 "text": {"type": "string"},
             },
             "required": ["var_object_to_move", "var_object_destination"],
+        },
+        {
+            "var_object_to_move": "entity_id",
+            "var_object_destination": "entity_id2",
         }
     )
     TEXT = (
@@ -32,6 +37,9 @@ class ActionType(Enum):
                 "var_object": {"type": "string"},
             },
             "required": ["var_object", "text"]
+        },
+        {
+            "var_object": "entity_id",
         }
     )
     ARROW = (
@@ -46,6 +54,10 @@ class ActionType(Enum):
                 "var_object_end": {"type": "string"},
             },
             "required": ["var_object_start", "var_object_end"]
+        },
+        {
+            "var_object_start": "entity_id",
+            "var_object_end": "entity_id2",
         }
     )
     AROUND = (
@@ -62,6 +74,10 @@ class ActionType(Enum):
                 "angle": {"type": "number"},
             },
             "required": ["var_object_who_move", "var_object_center", "distance", "angle"]
+        },
+        {
+            "var_object_who_move": "entity_id",
+            "var_object_center": "entity_id2",
         }
     )
     IMAGE = (
@@ -76,6 +92,10 @@ class ActionType(Enum):
                 "var_object": {"type": "string"}
             },
             "required": ["text", "path_image", "var_object"]
+        },
+        {
+            "var_object": "entity_id",
+            "path_image": "image",
         }
     )
     BACKGROUND = (
@@ -90,6 +110,10 @@ class ActionType(Enum):
                 "text": {"type": "string"}
             },
             "required": ["var_object", "path_image"]
+        },
+        {
+            "var_object": "entity_id",
+            "path_image": "image",
         }
     )
     SIZE = (
@@ -104,6 +128,9 @@ class ActionType(Enum):
                 "size": {"type": "number"}
             },
             "required": ["var_object", "size"]
+        },
+        {
+            "var_object": "entity_id",
         }
     )
     OPACITY = (
@@ -118,6 +145,9 @@ class ActionType(Enum):
                 "opacity": {"type": "number"}
             },
             "required": ["var_object", "opacity"]
+        },
+        {
+            "var_object": "entity_id",
         }
     )
     ROTATE = (
@@ -132,6 +162,9 @@ class ActionType(Enum):
                 "angle": {"type": "number"}
             },
             "required": ["var_object", "angle"]
+        },
+        {
+            "var_object": "entity_id",
         }
     )
     HIGHLIGHT = (
@@ -146,6 +179,9 @@ class ActionType(Enum):
                 "color": {"type": "string"}
             },
             "required": ["var_object", "color"]
+        },
+        {
+            "var_object": "entity_id",
         }
     )
     LOAD = (
@@ -160,6 +196,10 @@ class ActionType(Enum):
                 "var_object_loaded": {"type": "string"}
             },
             "required": ["var_object_who_load", "var_object_loaded"]
+        },
+        {
+            "var_object_who_load": "entity_id",
+            "var_object_loaded": "entity_id2",
         }
     )
     UNLOAD = (
@@ -174,16 +214,24 @@ class ActionType(Enum):
                 "var_object_unloaded": {"type": "string"}
             },
             "required": ["var_object_who_unload", "var_object_unloaded"]
+        },
+        {
+            "var_object_who_unload": "entity_id",
+            "var_object_unloaded": "entity_id2",
         }
     )
 
-    def __new__(cls, value, classname, attributes, schema):
+    def __new__(cls, value, classname, attributes, schema, map_properties):
         obj = object.__new__(cls)
         obj._value_ = value
         obj.classname = classname
         obj.attributes = attributes
         obj.schema = schema
+        obj.map_properties = map_properties
         return obj
+
+    def get_type_name(self):
+        return self.value
 
     def get_attributes(self):
         return self.attributes
@@ -193,3 +241,16 @@ class ActionType(Enum):
 
     def get_schema(self):
         return self.schema
+
+    def get_map_properties(self):
+        return self.map_properties
+
+    @classmethod
+    def from_str(cls, type_str: str):
+        for member in cls:
+            if member.value == type_str:
+                return member
+        raise ValueError(f"Unknown ActionType: {type_str}")
+
+    def get_mapping_value(self, attribute: str):
+        return self.get_map_properties().get(attribute, attribute)
