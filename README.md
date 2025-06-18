@@ -44,9 +44,9 @@ C:\Program Files\QGIS XXX\bin\python.exe
 
 Utilise cet interpréteur pour installer les paquets :
 ```
-"Chemin\python.exe" -m pip install jsonschema pyyaml
+"Chemin\python.exe" -m pip install jsonschema pyyaml pddlpy
 Exemple :
-"C:\Program Files\QGIS 3.28\bin\python.exe" -m pip install jsonschema pyyaml
+"C:\Program Files\QGIS 3.28\bin\python.exe" -m pip install jsonschema pyyaml pddlpy
 ```
 Remarque : Si l'installation de pip n'est pas disponible, vous devrez peut-être configurer pip pour fonctionner dans l'environnement Python de QGIS. Si nécessaire, consultez la documentation de QGIS pour savoir comment installer des paquets dans son environnement Python.
 
