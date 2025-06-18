@@ -429,6 +429,7 @@ class TraceQGIS:
             self.layerTraceQGIS.signal_entities_updated.disconnect(self.dock.refresh_radio_buttons)
 
             self.dlg.signal_lauch_demo.disconnect(self.launch_demo)
+            self.dlg.signal_launch.disconnect(self.launch)
 
             self.dock.signal_tick_changed.disconnect(self.layerTraceQGIS.go_to_tick)
             self.dock.signal_focus_changed.disconnect(self.layerTraceQGIS.set_focus)
@@ -476,6 +477,7 @@ class TraceQGIS:
             self.layerTraceQGIS.signal_entities_updated.connect(self.dock.refresh_radio_buttons)
 
             self.dlg.signal_lauch_demo.connect(self.launch_demo)
+            self.dlg.signal_launch.connect(self.launch)
 
             self.dock.signal_tick_changed.connect(self.layerTraceQGIS.go_to_tick)
             self.dock.signal_focus_changed.connect(self.layerTraceQGIS.set_focus)
@@ -486,6 +488,9 @@ class TraceQGIS:
 
     def launch_demo(self, demo: bool):
         self.layerTraceQGIS.reset(self.demo_generate_entity(), self.demo_generate_action())
+
+    def launch(self, entities: list[MapEntity], actions: list):
+        self.layerTraceQGIS.reset(entities, actions)
 
     def toggle_dock(self):
         if self.dock.isVisible():

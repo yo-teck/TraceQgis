@@ -103,9 +103,9 @@ class AdapterHelper:
         actions = []
         time = 0 #Init
         for an_exec in execution_sequences:
-            current_action = configuration.actions[an_exec["action"]]
+            current_action = configuration.actions.get(an_exec["action"])
             if current_action is None:
-                raise ValueError("Pas d'action paramétré pour " + an_exec["action"] )
+                continue
             for animation in current_action.animations:
                 actions.append(AdapterHelper.animation_to_action(an_exec, animation, time, domain_problem_model))
             time += current_action.duration
@@ -114,7 +114,6 @@ class AdapterHelper:
 
     @staticmethod
     def animation_to_action(an_exec: dict, animation: Animation, start_time: int, domain_problem: DomainProblemModel )-> dict:
-        mapping = animation.action_type.get_map_properties()
         action = {
             "type": animation.action_type.get_type_name(),
             "start_at": start_time + animation.start_at,
@@ -124,7 +123,7 @@ class AdapterHelper:
         for attribute in animation.attributes:
             value_attribute = animation.attributes[attribute]
             if attribute.startswith("var_"):
-                action_dp = domain_problem.get_action_parameters()[an_exec["action"]]
+                action_dp = domain_problem.get_action_parameters().get(an_exec["action"])
                 if action_dp is None:
                     raise ValueError("Action " + an_exec["action"] + " non trouvé dans le domain problem")
                 index_var = next((i for i, t in enumerate(action_dp) if t[0] == value_attribute), -1)

@@ -37,12 +37,13 @@ class TraceQGISDockWidget(QDockWidget, FORM_CLASS):
         set_max_tickSlider(max) : Définit la valeur maximale admissible pour le slider.
         set_value_tickSlider(value) : Ajuste la valeur du slider et met à jour les affichages du tick courant et équivalent.
     """
-    signal_focus_changed = pyqtSignal(int)
+    signal_focus_changed = pyqtSignal(str)
     signal_tick_changed = pyqtSignal(int)
     signal_speed_changed = pyqtSignal(int)
     signal_toggle_timer = pyqtSignal(int)
     signal_toggle_show_info_name = pyqtSignal(bool)
     signal_toggle_show_info_position = pyqtSignal(bool)
+    ENTITY_ID_PROPERTY_NAME = "entity_id"
 
     def __init__(self, parent=None, multiplier: float= 10, unit: str = "sec"):
         """
@@ -120,7 +121,8 @@ class TraceQGISDockWidget(QDockWidget, FORM_CLASS):
         i = 1
         for id_, name in entities_list:
             btn = QRadioButton(name)
-            self.radio_group.addButton(btn, int(id_))
+            btn.setProperty(self.ENTITY_ID_PROPERTY_NAME, id_)
+            self.radio_group.addButton(btn, i)
             row = i // 2  # ligne actuelle
             col = i % 2  # 0 ou 1 : colonne
             self.radio_layout.addWidget(btn, row, col)
@@ -133,7 +135,7 @@ class TraceQGISDockWidget(QDockWidget, FORM_CLASS):
         Paramètres:
         id_ : Identifiant de l'élément sélectionné.
         """
-        self.signal_focus_changed.emit(id_)
+        self.signal_focus_changed.emit(self.get_focus())
 
     def get_vitesse(self) -> int:
         """
@@ -164,7 +166,7 @@ class TraceQGISDockWidget(QDockWidget, FORM_CLASS):
         """
         checked_button = self.radio_group.checkedButton()
         if checked_button:
-            return self.radio_group.id(checked_button)
+            return checked_button.property(self.ENTITY_ID_PROPERTY_NAME)
         return None
 
     def toggle_timer(self):

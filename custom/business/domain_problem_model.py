@@ -86,16 +86,22 @@ class DomainProblemModel:
     def get_action_parameters(self) -> dict[str, list[Tuple[str,str]]]: return self.action_parameters
     def get_actions(self) -> list[str]: return self.actions
 
-    def load_plan(self, plan_path: str) -> None:
+    def load_plan(self, plan_content: str) -> None:
         self._plan.clear()
-        pat = re.compile(r"\(?\s*\d*:?[ \t]*\(?([A-Za-z0-9_-]+)([^)]*)\)?")
-        with open(plan_path, encoding="utf-8") as f:
-            for ln in f:
-                mo = pat.search(ln)
-                if mo:
-                    act = mo.group(1)
-                    args = mo.group(2).strip().split()
-                    self._plan.append({"action": act, "args": args})
+        pat = re.compile(r"^\s*\d+:\s*\(\s*([^\s()]+)((?:\s+[^\s()]+)*)\s*\)\s*(?:\[\d+\])?$")
+
+        for line in plan_content.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            mo = pat.match(line)
+            if not mo:
+                print(f"⚠️ Ligne ignorée (non reconnue) : {line}")
+                continue
+
+            action = mo.group(1)
+            args = mo.group(2).strip().split()
+            self._plan.append({"action": action, "args": args})
 
     def get_execution_sequence(self) -> List[Dict]: return self._plan
 

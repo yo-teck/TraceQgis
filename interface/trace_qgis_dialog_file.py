@@ -1,5 +1,9 @@
+import json
 import os
 
+from qgis._core import QgsMessageLog, Qgis
+from ..custom.business.map_entity import MapEntity
+from ..custom.utils.adapter_helper import AdapterHelper
 from ..custom.manager.domain_problem_manager import DomainProblemManager
 from qgis.PyQt import uic, QtWidgets
 from PyQt5.QtWidgets import QMessageBox, QFileDialog, QPushButton
@@ -26,6 +30,7 @@ class TraceQGISDialogFile(QtWidgets.QDialog, FORM_CLASS):
     """
 
     signal_lauch_demo = pyqtSignal(bool)
+    signal_launch = pyqtSignal(list, list)
 
     def __init__(self, parent=None):
         """
@@ -154,6 +159,11 @@ class TraceQGISDialogFile(QtWidgets.QDialog, FORM_CLASS):
             dpm.get_current_model().load_plan(self.domain_problem_output.toPlainText())
             self.data = YamlHelper.read_file(path, plugin_dir + "/../schema/base_yaml_validator.json")
             dpm.get_current_model().save_configuration(self.data)
+            map_entities = AdapterHelper.domain_problem_to_map_entity(dpm.get_current_model())
+            map_actions = AdapterHelper.domain_problem_to_actions(dpm.get_current_model())
+            ids = [entity.id for entity in map_entities]
+            QgsMessageLog.logMessage(f"IDs des MapEntity : {ids}", tag="MapEntity", level=Qgis.Info)
+            self.launch(map_entities, map_actions)
         except Exception as e:
             QMessageBox.warning(self, "Erreur", str(e))
             return
@@ -162,6 +172,10 @@ class TraceQGISDialogFile(QtWidgets.QDialog, FORM_CLASS):
 
     def launch_demo(self):
         self.signal_lauch_demo.emit(True)
+        self.close()
+
+    def launch(self, entities: list[MapEntity], actions: list):
+        self.signal_launch.emit(entities, actions)
         self.close()
 
     def unload(self):

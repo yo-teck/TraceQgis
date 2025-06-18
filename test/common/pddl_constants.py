@@ -30,7 +30,6 @@ LOGISTICS_DOMAIN = """
 )
 """
 
-# Données de test : problem.pddl
 LOGISTICS_PROBLEM = """
 (define (problem logistics-problem)
   (:domain logistics)
@@ -48,21 +47,18 @@ LOGISTICS_PROBLEM = """
 )
 """
 
-# Données de test : plan.txt
 PLAN_CONTENT = """
 0: (LOAD-TRUCK obj1 tru1 pos1)
 1: (DRIVE-TRUCK tru1 pos1 pos2 cit1)
 2: (UNLOAD-TRUCK obj1 tru1 pos2)
 """
 
-# === Crée une instance du parser avec des fichiers temporaires
 def create_parser_for_test(tmp_path):
     domain_path = tmp_path / "domain.pddl"
     problem_path = tmp_path / "problem.pddl"
-    plan_path = tmp_path / "plan.txt"
 
     domain_path.write_text(LOGISTICS_DOMAIN)
     problem_path.write_text(LOGISTICS_PROBLEM)
-    plan_path.write_text(PLAN_CONTENT)
 
-    return DomainProblemModel(str(domain_path), str(problem_path), str(plan_path))
+    # NOTE : le plan est passé directement en contenu (string)
+    return DomainProblemModel(str(domain_path), str(problem_path), PLAN_CONTENT.strip())
