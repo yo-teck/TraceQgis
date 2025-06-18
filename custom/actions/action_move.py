@@ -11,7 +11,7 @@ class ActionMove(Action):
     """
         Classe ActionMove permet de mettre à jour la position d'une entité en fonction du temps
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, lat_from: float|None, lon_from: float|None, alti_from: float|None, lat_to: float, lon_to: float, alti_to: float|None, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, lat_from: float|None, lon_from: float|None, alti_from: float|None, lat_to: float, lon_to: float, alti_to: float|None, text: str = ""):
         """
         Initialise une instance de la classe avec les paramètres spécifiés.
 

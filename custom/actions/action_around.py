@@ -7,7 +7,7 @@ class ActionAround(Action):
     Classe ActionAround permet de déplacer une entité est déplacé autour d'un autre
 
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, distance: float = 100, angle: float = 360, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, entity_id2: str, distance: float = 100, angle: float = 360, text: str = ""):
         """
         Initialise une instance de la classe avec les paramètres donnés.
 

@@ -18,6 +18,7 @@ from qgis.core import (
 from qgis.PyQt.QtCore import Qt, QTimer, QVariant, pyqtSignal, QObject
 from typing import TYPE_CHECKING
 from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QMessageBox
 
 from PyQt5.QtCore import QMetaType
 from qgis.core import QgsField
@@ -168,7 +169,7 @@ class LayerTraceQGIS(QObject):
         self.layer = QgsVectorLayer("Point?crs=EPSG:4326", "Entity", "memory")
 
         self.layer.dataProvider().addAttributes([
-            QgsField("id", QMetaType.Int),  # entier
+            QgsField("id", QMetaType.QString),  # entier
             QgsField("nom", QMetaType.QString)  # chaîne
         ])
 
@@ -206,7 +207,7 @@ class LayerTraceQGIS(QObject):
         self.layer_trace.setRenderer(QgsSingleSymbolRenderer(QgsLineSymbol()))
 
         self.layer_trace.dataProvider().addAttributes([
-            QgsField("id", QMetaType.Int),  # entier
+            QgsField("id", QMetaType.QString),  # entier
             QgsField("nom", QMetaType.QString)  # chaîne
         ])
         self.layer_trace.updateFields()
@@ -386,13 +387,18 @@ class LayerTraceQGIS(QObject):
             self.stop_timer()
             return False
 
-        self.reset_before_refresh()
+        try:
+            self.reset_before_refresh()
 
-        self.refresh_action()
-        self.refresh_line()
-        self.refresh_focus()
+            self.refresh_action()
+            self.refresh_line()
+            self.refresh_focus()
 
-        self.signal_tick_changed.emit(self.tick)
+            self.signal_tick_changed.emit(self.tick)
+        except Exception as e:
+            QMessageBox.warning(self, "Erreur", str(e))
+            self.stop_timer()
+            return False
 
         self.tick += 1
         return True
@@ -590,7 +596,7 @@ class LayerTraceQGIS(QObject):
             self.stop_timer()
 
     # INTERFACE SECTION
-    def draw_line_between(self, idFeature1: int, idFeature2: int):
+    def draw_line_between(self, idFeature1: str, idFeature2: str):
         """
         Dessine une ligne directe entre deux entités sur layer_lines.
         """
@@ -624,7 +630,7 @@ class LayerTraceQGIS(QObject):
         line_feature.setGeometry(line_geom)
         self.layer_lines.addFeature(line_feature)
 
-    def exist_line(self, id1, id2):
+    def exist_line(self, id1: str, id2: str):
         """
         Vérifie si une ligne existante connecte deux identifiants donnés.
 
@@ -637,7 +643,7 @@ class LayerTraceQGIS(QObject):
         """
         return any(line == [id1, id2] for line in self.lines)
 
-    def add_line(self, idFeature1: int, idFeature2: int):
+    def add_line(self, idFeature1: str, idFeature2: str):
         """
         Ajoute une ligne entre deux entités si elle n'existe pas déjà.
 
@@ -651,7 +657,7 @@ class LayerTraceQGIS(QObject):
         if not self.exist_line(idFeature1, idFeature2):
             self.lines.append([idFeature1, idFeature2])
 
-    def remove_line(self, id1, id2):
+    def remove_line(self, id1: str, id2: str):
         """
         Supprime une ligne spécifique entre deux identifiants donnés.
 
@@ -667,7 +673,7 @@ class LayerTraceQGIS(QObject):
             if set(line) == {id1, id2}:
                 self.lines.remove(line)
 
-    def set_focus(self, id_entity: int):
+    def set_focus(self, id_entity: str):
         """
         Définit la mise au point de l'entité spécifiée.
 
@@ -905,7 +911,7 @@ class LayerTraceQGIS(QObject):
         LayerTraceQGIS._instance = None
 
     @staticmethod
-    def get_map_entity(entity_id: int):
+    def get_map_entity(entity_id: str):
         return LayerTraceQGIS.get_instance().map_entities.get(entity_id)
 
     @staticmethod

@@ -13,7 +13,7 @@ class ActionMoveTo(Action):
     """
     Classe ActionMoveTo permet de déplacer une entité vers une autre entité a une distance donnée.
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, entity_id2: int, distance: float = 100, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, entity_id2: str, distance: float = 100, text: str = ""):
         """
         Constructeur pour initialiser une instance avec des paramètres spécifiques.
 

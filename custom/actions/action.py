@@ -18,7 +18,7 @@ class Action(ABC):
     Exceptions :
     - Exception : Levée lorsque les paramètres d'initialisation sont invalides ou si start_at est supérieur à end_at.
     """
-    def __init__(self, start_at: int, end_at: int, entity_id: int, text: str = ""):
+    def __init__(self, start_at: int, end_at: int, entity_id: str, text: str = ""):
         """
         Initialise une instance avec les paramètres fournis.
 

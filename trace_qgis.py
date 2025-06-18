@@ -75,10 +75,6 @@ class TraceQGIS:
         self.dock = None
         self.layerTraceQGIS = None
 
-    def generate_entity(self):
-        # TODO
-        return []
-
     def demo_generate_entity(self):
 
         plugin_dir = os.path.dirname(os.path.abspath(__file__))
@@ -120,10 +116,6 @@ class TraceQGIS:
             entities.append(balise)
 
         return entities
-
-    def generate_action(self):
-        # TODO
-        return []
 
     def demo_generate_action(self):
 
@@ -294,10 +286,6 @@ class TraceQGIS:
 
         return actions
 
-    def init_trace(self):
-
-        self.layerTraceQGIS.reset(self.generate_entity(), self.generate_action())
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -429,6 +417,7 @@ class TraceQGIS:
             self.layerTraceQGIS.signal_entities_updated.disconnect(self.dock.refresh_radio_buttons)
 
             self.dlg.signal_lauch_demo.disconnect(self.launch_demo)
+            self.dlg.signal_launch.disconnect(self.launch)
 
             self.dock.signal_tick_changed.disconnect(self.layerTraceQGIS.go_to_tick)
             self.dock.signal_focus_changed.disconnect(self.layerTraceQGIS.set_focus)
@@ -459,12 +448,6 @@ class TraceQGIS:
 
         # show the dialog
         self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            self.init_trace()
-            pass
 
     def init_layer_trace_qgis(self):
         if self.layerTraceQGIS is None:
@@ -476,6 +459,7 @@ class TraceQGIS:
             self.layerTraceQGIS.signal_entities_updated.connect(self.dock.refresh_radio_buttons)
 
             self.dlg.signal_lauch_demo.connect(self.launch_demo)
+            self.dlg.signal_launch.connect(self.launch)
 
             self.dock.signal_tick_changed.connect(self.layerTraceQGIS.go_to_tick)
             self.dock.signal_focus_changed.connect(self.layerTraceQGIS.set_focus)
@@ -486,6 +470,9 @@ class TraceQGIS:
 
     def launch_demo(self, demo: bool):
         self.layerTraceQGIS.reset(self.demo_generate_entity(), self.demo_generate_action())
+
+    def launch(self, entities: list[MapEntity], actions: list):
+        self.layerTraceQGIS.reset(entities, actions)
 
     def toggle_dock(self):
         if self.dock.isVisible():

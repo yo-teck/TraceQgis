@@ -68,7 +68,7 @@
         "end_at": { "type": "integer" }
       },
       "required": ["name", "start_at", "end_at"],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "action": {
       "type": "object",
