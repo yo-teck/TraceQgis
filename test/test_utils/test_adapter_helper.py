@@ -398,8 +398,8 @@ def test_domain_problem_to_actions(tmp_path):
     assert actions[1]["type"] == "move"
     assert actions[2]["type"] == "unload"
     assert actions[0]["start_at"] == 0
-    assert actions[1]["start_at"] == DEFAULT_ANIMATION_DURATION
-    assert actions[2]["start_at"] == 2 * DEFAULT_ANIMATION_DURATION
+    assert actions[1]["start_at"] == DEFAULT_ANIMATION_DURATION + 1
+    assert actions[2]["start_at"] == 2 * (DEFAULT_ANIMATION_DURATION + 1)
 
 from custom.enums.action_mapping import ActionType
 from custom.business.dm_carto_configuration_model import Animation
